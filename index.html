@@ -926,9 +926,9 @@ footer span { color:var(--gold); opacity:.45; }
 
         <div class="field" style="margin-bottom:18px;">
           <label>Ville de retrait *</label>
-          <div class="radio-row">
+          <div class="radio-row" id="villeRadioRow">
             <div class="radio-card">
-              <input type="radio" name="ville" id="v-narb" value="Narbonne" required>
+              <input type="radio" name="ville" id="v-narb" value="Narbonne">
               <label for="v-narb">📍 Narbonne</label>
             </div>
             <div class="radio-card">
@@ -936,6 +936,7 @@ footer span { color:var(--gold); opacity:.45; }
               <label for="v-bez">📍 Béziers</label>
             </div>
           </div>
+          <div id="villeError" style="display:none;color:#e06070;font-size:.85rem;margin-top:6px;">⚠️ Veuillez choisir une ville de retrait</div>
         </div>
 
         <div class="field form-grid full" style="margin-bottom:24px;">
@@ -1346,13 +1347,14 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   // Vérifier que la ville est sélectionnée
   const ville = fd.get('ville');
   if (!ville) {
-    document.getElementById('v-narb').closest('.field').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const radioRow = document.querySelector('.radio-row');
-    radioRow.classList.add('error');
-    setTimeout(() => radioRow.classList.remove('error'), 1500);
+    document.getElementById('villeRadioRow').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('villeError').style.display = 'block';
+    document.getElementById('villeRadioRow').classList.add('error');
+    setTimeout(() => document.getElementById('villeRadioRow').classList.remove('error'), 600);
     showToast('⚠️ Veuillez choisir une ville de retrait');
     return;
   }
+  document.getElementById('villeError').style.display = 'none';
 
   const nom = fd.get('nom');
   const tel = fd.get('tel');
