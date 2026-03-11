@@ -1103,10 +1103,14 @@ const VAN_URL = 'https://raw.githubusercontent.com/SouSweetiee/SouSweetiee/main/
 const VAN_HTML_LG = '<img src="' + VAN_URL + '" alt="Vanille" style="width:3.8rem;height:3.8rem;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(201,168,76,.3));">';
 const VAN_HTML_SM = '<img src="' + VAN_URL + '" alt="Vanille" style="width:2rem;height:2rem;object-fit:contain;">';
 
+const PAS_URL = 'https://raw.githubusercontent.com/SouSweetiee/SouSweetiee/main/passion.png';
+const PAS_HTML_LG = '<img src="' + PAS_URL + '" alt="Passion" style="width:3.8rem;height:3.8rem;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(201,168,76,.3));">';
+const PAS_HTML_SM = '<img src="' + PAS_URL + '" alt="Passion" style="width:2rem;height:2rem;object-fit:contain;">';
+
 patisseries.forEach(p => {
   const card = document.createElement('div');
   card.className = 'card reveal';
-  const emojiHtml = p.id === 'framboise' ? RASP_HTML_LG : p.id === 'vanille' ? VAN_HTML_LG : p.emoji;
+  const emojiHtml = p.id === 'framboise' ? RASP_HTML_LG : p.id === 'vanille' ? VAN_HTML_LG : p.id === 'passion' ? PAS_HTML_LG : p.emoji;
   card.innerHTML = `
     <span class="card-emoji">${emojiHtml}</span>
     <div class="card-name">${p.name}</div>
@@ -1160,7 +1164,7 @@ function renderTrompeSelector() {
     div.className = 'trompe-item' + (qty > 0 ? ' selected' : '');
     div.innerHTML = `
       <div class="trompe-item-qty">${qty}</div>
-      <span class="trompe-item-emoji">${p.id === 'framboise' ? RASP_HTML_SM : p.id === 'vanille' ? VAN_HTML_SM : p.emoji}</span>
+      <span class="trompe-item-emoji">${p.id === 'framboise' ? RASP_HTML_SM : p.id === 'vanille' ? VAN_HTML_SM : p.id === 'passion' ? PAS_HTML_SM : p.emoji}</span>
       <span class="trompe-item-name">${p.name}</span>
       <span class="trompe-item-price">${p.price}€</span>
       <div class="trompe-item-btns">
