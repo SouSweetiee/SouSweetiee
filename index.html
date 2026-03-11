@@ -792,7 +792,7 @@ footer span { color:var(--gold); opacity:.45; }
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">SouSweetie</div>
+  <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="cursor:pointer;">SouSweetie</div>
   <button class="nav-burger" id="navBurger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -996,7 +996,7 @@ footer span { color:var(--gold); opacity:.45; }
           <div class="field">
             <label>Téléphone *</label>
             <input type="tel" name="tel" id="telInput" placeholder="06 XX XX XX XX" required maxlength="10" pattern="[0-9]{10}" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)" inputmode="numeric">
-            <div id="telError" style="display:none;color:#e06070;font-size:.85rem;margin-top:6px;">⚠️ Veuillez entrer un numéro valide (06 ou 07)</div>
+            <div id="telError" style="display:none;color:#e06070;font-size:.85rem;margin-top:6px;">⚠️ Veuillez entrer un numéro de téléphone valide</div>
           </div>
         </div>
 
