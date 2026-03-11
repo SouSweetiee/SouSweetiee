@@ -1030,12 +1030,11 @@ function updateRecap() {
       const c = coffrets[id];
       const sub = c.price * qty;
       total += sub;
-      // Afficher les trompe-l'œil choisis si applicable
-      const trompeList = patisseries
+      const trompeLines = patisseries
         .filter(p => trompeChoix[p.id] > 0)
-        .map(p => `${p.emoji}${p.name}×${trompeChoix[p.id]}`)
-        .join(', ');
-      const detail = trompeList ? ` (${trompeList})` : ' (parfums à préciser)';
+        .map(p => `• ${p.name} ×${trompeChoix[p.id]}`)
+        .join('<br>');
+      const detail = trompeLines ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${trompeLines}</span>` : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos parfums ci-dessus</span>`;
       items.push({ name:`${c.emoji} ${c.name} ×${qty}${detail}`, price:sub });
     }
   });
@@ -1054,7 +1053,7 @@ function updateRecap() {
     list.innerHTML = '<div class="recap-empty">Aucun article sélectionné</div>';
   } else {
     list.innerHTML = items.map(i =>
-      `<div class="recap-item"><span>${i.name}</span><span class="recap-item-price">${i.price}€</span></div>`
+      `<div class="recap-item"><span style="line-height:1.6;">${i.name}</span><span class="recap-item-price">${i.price}€</span></div>`
     ).join('');
   }
 
@@ -1192,13 +1191,33 @@ function changeTrompe(id, d, event) {
   event.preventDefault();
   const needed = getTotalTrompeNeeded();
   const total = getTotalTrompeChoisi();
-  if (d > 0 && total >= needed) {
-    showToast('Vous avez déjà atteint le nombre requis !');
-    return;
+
+  if (d > 0) {
+    // Bloquer vanille pour découverte
+    if (id === 'vanille' && coffretQtys['decouverte'] > 0 && coffretQtys['premium'] === 0 && coffretQtys['famille'] === 0) {
+      showToast('La vanille n\'est pas disponible pour le Coffret Découverte');
+      return;
+    }
+    // Max 1 vanille pour premium/famille
+    if (id === 'vanille' && trompeChoix['vanille'] >= 1) {
+      showToast('Maximum 1 Gousse de Vanille par commande de coffret');
+      return;
+    }
+    // Bloquer vanille si seulement découverte sélectionné
+    if (id === 'vanille' && coffretQtys['premium'] === 0 && coffretQtys['famille'] === 0) {
+      showToast('La vanille n\'est pas disponible pour le Coffret Découverte');
+      return;
+    }
+    if (total >= needed) {
+      showToast('Vous avez déjà atteint le nombre requis !');
+      return;
+    }
   }
+
   trompeChoix[id] = Math.max(0, trompeChoix[id] + d);
   if (d > 0) spawnSparkle(event);
   renderTrompeSelector();
+  updateRecap();
 }
 
 // ── COFFRETS AÏD ──
