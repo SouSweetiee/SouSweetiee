@@ -986,7 +986,7 @@ footer span { color:var(--gold); opacity:.45; }
 const patisseries = [
   { id:'citron',    name:'Citron',           emoji:'🍋', price:5,  desc:'Trompe-l\'œil acidulé et frais, une illusion gustative parfaite' },
   { id:'mangue',    name:'Mangue',           emoji:'🥭', price:5,  desc:'Exotisme tropical encapsulé dans une pâtisserie surprenante' },
-  { id:'framboise', name:'Framboise', emoji:'RASPBERRY', price:5, desc:'Fraîcheur et élégance dans une forme en cœur délicate' },
+  { id:'framboise', name:'Framboise', emoji:'🍓', price:5, desc:'Fraîcheur et élégance dans une forme en cœur délicate' },
   { id:'cacahuete', name:'Cacahuète',        emoji:'🥜', price:5,  desc:'Gourmandise croquante au design naturel bluffant' },
   { id:'passion',   name:'Passion',          emoji:'🌺', price:5,  desc:'L\'intensité du fruit de la passion sublimée en art pâtissier' },
   { id:'vanille',   name:'Gousse de Vanille',emoji:'🌿', price:7,  desc:'La reine des saveurs, un chef-d\'œuvre trompe-l\'œil floral' },
@@ -1095,11 +1095,16 @@ function changeQty(id, d, event) {
   showToast(d > 0 ? `${p.name} ajouté ✦` : `${p.name} retiré`);
 }
 
+const RASP_URL = 'https://raw.githubusercontent.com/SouSweetiee/SouSweetiee/main/framboise.png';
+const RASP_HTML_LG = '<img src="' + RASP_URL + '" alt="Framboise" style="width:3.8rem;height:3.8rem;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(201,168,76,.3));">';
+const RASP_HTML_SM = '<img src="' + RASP_URL + '" alt="Framboise" style="width:2rem;height:2rem;object-fit:contain;">';
+
 patisseries.forEach(p => {
   const card = document.createElement('div');
   card.className = 'card reveal';
+  const emojiHtml = p.id === 'framboise' ? RASP_HTML_LG : p.emoji;
   card.innerHTML = `
-    <span class="card-emoji">${p.emoji === 'RASPBERRY' ? RASPBERRY_IMG : p.emoji}</span>
+    <span class="card-emoji">${emojiHtml}</span>
     <div class="card-name">${p.name}</div>
     <div class="card-desc">${p.desc}</div>
     <div class="price-tag">${p.price}€ / pièce</div>
@@ -1151,7 +1156,7 @@ function renderTrompeSelector() {
     div.className = 'trompe-item' + (qty > 0 ? ' selected' : '');
     div.innerHTML = `
       <div class="trompe-item-qty">${qty}</div>
-      <span class="trompe-item-emoji">${p.emoji === 'RASPBERRY' ? '<img src="https://raw.githubusercontent.com/SouSweetiee/SouSweetiee/main/framboise.png" alt="Framboise" style="width:2rem;height:2rem;object-fit:contain;">' : p.emoji}</span>
+      <span class="trompe-item-emoji">${p.id === 'framboise' ? RASP_HTML_SM : p.emoji}</span>
       <span class="trompe-item-name">${p.name}</span>
       <span class="trompe-item-price">${p.price}€</span>
       <div class="trompe-item-btns">
@@ -1329,8 +1334,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   this.style.display='none';
   document.getElementById('successScreen').style.display='block';
 });
-
-const RASPBERRY_IMG = '<img src="https://raw.githubusercontent.com/SouSweetiee/SouSweetiee/main/framboise.png" alt="Framboise" style="width:3.8rem;height:3.8rem;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(201,168,76,.3));">';
 
 // ── REVEAL ON SCROLL ──
 const obs=new IntersectionObserver(entries=>{
