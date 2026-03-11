@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SouSweetie — Passer Commande</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --gold-pale: #F5E6B8;
+    --dark: #0E0A06;
+    --dark2: #1A1208;
+    --dark3: #241A0C;
+    --cream: #F9F0DC;
+    --red-berry: #8B1A2A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--dark);
+    background-image: 
+      radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(139,26,42,0.08) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A84C' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    min-height: 100vh;
+    font-family: 'Lato', sans-serif;
+    color: var(--cream);
+    padding: 20px;
+  }
+
+  .page-wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    position: relative;
+  }
+
+  .header::before, .header::after {
+    content: '✦';
+    color: var(--gold);
+    font-size: 14px;
+    position: absolute;
+    top: 50px;
+  }
+  .header::before { left: 30px; }
+  .header::after { right: 30px; }
+
+  .logo {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: clamp(28px, 7vw, 48px);
+    background: linear-gradient(135deg, #C9A84C, #F5E6B8, #C9A84C, #A07830);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+    filter: drop-shadow(0 0 20px rgba(201,168,76,0.4));
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { filter: drop-shadow(0 0 20px rgba(201,168,76,0.4)); }
+    50% { filter: drop-shadow(0 0 35px rgba(201,168,76,0.7)); }
+  }
+
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--gold-light);
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .divider span {
+    color: var(--gold);
+    font-size: 12px;
+  }
+
+  /* FORM CARD */
+  .form-card {
+    background: linear-gradient(145deg, rgba(36,26,12,0.95), rgba(26,18,8,0.98));
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 4px;
+    padding: 30px 28px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .form-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-card:nth-child(2) { animation-delay: 0.1s; }
+  .form-card:nth-child(3) { animation-delay: 0.2s; }
+  .form-card:nth-child(4) { animation-delay: 0.3s; }
+  .form-card:nth-child(5) { animation-delay: 0.4s; }
+
+  .section-title {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0.4;
+  }
+
+  /* INPUTS */
+  .field-group {
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: var(--gold-pale);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  label .required { color: var(--gold); margin-left: 3px; }
+
+  input[type="text"], input[type="tel"], textarea, select {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 2px;
+    padding: 12px 14px;
+    color: var(--cream);
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+  }
+
+  input[type="text"]:focus, input[type="tel"]:focus, textarea:focus {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.06);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.08), inset 0 0 12px rgba(201,168,76,0.04);
+  }
+
+  input::placeholder, textarea::placeholder { color: rgba(245,230,184,0.3); }
+
+  /* RADIO VILLE */
+  .radio-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .radio-option {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .radio-option input[type="radio"] { display: none; }
+
+  .radio-option label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: var(--gold-pale);
+    background: rgba(255,255,255,0.03);
+    margin-bottom: 0;
+  }
+
+  .radio-option input[type="radio"]:checked + label {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.12);
+    color: var(--gold-light);
+    box-shadow: 0 0 16px rgba(201,168,76,0.15);
+  }
+
+  .radio-option label:hover {
+    border-color: rgba(201,168,76,0.5);
+    background: rgba(201,168,76,0.06);
+  }
+
+  /* PATISSERIES GRID */
+  .patisserie-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .patisserie-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 2px;
+    background: rgba(255,255,255,0.02);
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .patisserie-row:hover {
+    background: rgba(201,168,76,0.04);
+    border-color: rgba(201,168,76,0.3);
+  }
+
+  .patisserie-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: var(--cream);
+  }
+
+  .patisserie-price {
+    font-size: 11px;
+    color: var(--gold);
+    margin-left: 6px;
+  }
+
+  .qty-selector {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .qty-btn {
+    width: 30px;
+    height: 30px;
+    background: rgba(201,168,76,0.1);
+    border: none;
+    color: var(--gold);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Lato', sans-serif;
+  }
+
+  .qty-btn:hover { background: rgba(201,168,76,0.25); }
+
+  .qty-display {
+    width: 36px;
+    height: 30px;
+    background: rgba(255,255,255,0.03);
+    color: var(--cream);
+    font-size: 14px;
+    text-align: center;
+    line-height: 30px;
+    border-left: 1px solid rgba(201,168,76,0.2);
+    border-right: 1px solid rgba(201,168,76,0.2);
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+  }
+
+  /* DATES & FRANUI OPTIONS */
+  .option-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option-item input[type="radio"] { display: none; }
+
+  .option-item label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 16px;
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.25s;
+    background: rgba(255,255,255,0.02);
+    margin-bottom: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: var(--cream);
+  }
+
+  .option-item input[type="radio"]:checked + label {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    color: var(--gold-light);
+  }
+
+  .option-item label:hover {
+    border-color: rgba(201,168,76,0.4);
+    background: rgba(201,168,76,0.05);
+  }
+
+  .option-price {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* TOTAL */
+  .total-bar {
+    background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.06));
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 2px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .total-label {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  .total-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    color: var(--gold-light);
+    font-weight: 600;
+  }
+
+  /* SUBMIT */
+  .submit-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #A07830, #C9A84C, #E8C96A, #C9A84C, #A07830);
+    background-size: 200% 100%;
+    border: none;
+    border-radius: 2px;
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--dark);
+    cursor: pointer;
+    transition: background-position 0.4s, box-shadow 0.3s, transform 0.2s;
+    text-transform: uppercase;
+    box-shadow: 0 4px 24px rgba(201,168,76,0.25);
+  }
+
+  .submit-btn:hover {
+    background-position: 100% 0;
+    box-shadow: 0 6px 32px rgba(201,168,76,0.45);
+    transform: translateY(-1px);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  /* SUCCESS */
+  .success-msg {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+    animation: fadeUp 0.5s ease;
+  }
+
+  .success-msg .check {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .success-msg h2 {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 18px;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+  }
+
+  .success-msg p {
+    color: var(--gold-pale);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+  }
+
+  /* FOOTER */
+  .footer-note {
+    text-align: center;
+    padding: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: rgba(201,168,76,0.5);
+    font-size: 13px;
+  }
+
+  /* SPARKLES */
+  .sparkle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 12px;
+    color: var(--gold);
+    opacity: 0;
+    animation: sparkle-fall 2s ease forwards;
+    z-index: 999;
+  }
+
+  @keyframes sparkle-fall {
+    0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(-80px) rotate(360deg); }
+  }
+
+  textarea { resize: none; min-height: 80px; }
+
+  @media (max-width: 480px) {
+    .form-card { padding: 22px 16px; }
+    .patisserie-row { grid-template-columns: 1fr; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">SouSweetie</div>
+    <div class="subtitle">✦ Pâtisseries Trompe-l'œil ✦</div>
+    <div class="divider"><span>✦</span></div>
+    <p style="font-family:'Cormorant Garamond',serif; font-style:italic; color:rgba(245,230,184,0.6); font-size:14px;">
+      L'art de la gourmandise — Passez votre commande
+    </p>
+  </div>
+
+  <form id="orderForm">
+
+    <!-- INFO CLIENT -->
+    <div class="form-card">
+      <div class="section-title">Vos coordonnées</div>
+
+      <div class="field-group">
+        <label>Nom & Prénom <span class="required">*</span></label>
+        <input type="text" name="nom" placeholder="Votre nom complet" required>
+      </div>
+
+      <div class="field-group">
+        <label>Numéro de téléphone <span class="required">*</span></label>
+        <input type="tel" name="telephone" placeholder="06 XX XX XX XX" required>
+      </div>
+
+      <div class="field-group">
+        <label>Ville de retrait <span class="required">*</span></label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="ville" id="narbonne" value="Narbonne" required>
+            <label for="narbonne">📍 Narbonne</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="ville" id="beziers" value="Béziers">
+            <label for="beziers">📍 Béziers</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PATISSERIES -->
+    <div class="form-card">
+      <div class="section-title">🍋 Pâtisseries Trompe-l'œil</div>
+
+      <div class="patisserie-grid">
+        <div class="patisserie-row">
+          <div class="patisserie-name">🍋 Citron <span class="patisserie-price">5€/pièce</span></div>
+          <div class="qty-selector">
+            <button type="button" class="qty-btn" onclick="changeQty('citron',-1)">−</button>
+            <div class="qty-display" id="citron-display">0</div>
+            <button type="button" class="qty-btn" onclick="changeQty('citron',1)">+</button>
+          </div>
+          <input type="hidden" name="citron" id="citron" value="0">
+        </div>
+        <div class="patisserie-row">
+          <div class="patisserie-name">🥭 Mangue <span class="patisserie-price">5€/pièce</span></div>
+          <div class="qty-selector">
+            <button type="button" class="qty-btn" onclick="changeQty('mangue',-1)">−</button>
+            <div class="qty-display" id="mangue-display">0</div>
+            <button type="button" class="qty-btn" onclick="changeQty('mangue',1)">+</button>
+          </div>
+          <input type="hidden" name="mangue" id="mangue" value="0">
+        </div>
+        <div class="patisserie-row">
+          <div class="patisserie-name">🫐 Framboise <span class="patisserie-price">5€/pièce</span></div>
+          <div class="qty-selector">
+            <button type="button" class="qty-btn" onclick="changeQty('framboise',-1)">−</button>
+            <div class="qty-display" id="framboise-display">0</div>
+            <button type="button" class="qty-btn" onclick="changeQty('framboise',1)">+</button>
+          </div>
+          <input type="hidden" name="framboise" id="framboise" value="0">
+        </div>
+        <div class="patisserie-row">
+          <div class="patisserie-name">🥜 Cacahuète <span class="patisserie-price">5€/pièce</span></div>
+          <div class="qty-selector">
+            <button type="button" class="qty-btn" onclick="changeQty('cacahuete',-1)">−</button>
+            <div class="qty-display" id="cacahuete-display">0</div>
+            <button type="button" class="qty-btn" onclick="changeQty('cacahuete',1)">+</button>
+          </div>
+          <input type="hidden" name="cacahuete" id="cacahuete" value="0">
+        </div>
+        <div class="patisserie-row">
+          <div class="patisserie-name">🌺 Passion <span class="patisserie-price">5€/pièce</span></div>
+          <div class="qty-selector">
+            <button type="button" class="qty-btn" onclick="changeQty('passion',-1)">−</button>
+            <div class="qty-display" id="passion-display">0</div>
+            <button type="button" class="qty-btn" onclick="changeQty('passion',1)">+</button>
+          </div>
+          <input type="hidden" name="passion" id="passion" value="0">
+        </div>
+        <div class="patisserie-row">
+          <div class="patisserie-name">🌸 Gousse de Vanille <span class="patisserie-price">7€/pièce</span></div>
+          <div class="qty-selector">
+            <button type="button" class="qty-btn" onclick="changeQty('vanille',-1)">−</button>
+            <div class="qty-display" id="vanille-display">0</div>
+            <button type="button" class="qty-btn" onclick="changeQty('vanille',1)">+</button>
+          </div>
+          <input type="hidden" name="vanille" id="vanille" value="0">
+        </div>
+      </div>
+    </div>
+
+    <!-- DATES FOURREES -->
+    <div class="form-card">
+      <div class="section-title">✦ Dates Fourrées</div>
+      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; color:rgba(245,230,184,0.5); font-size:13px; margin-bottom:14px;">Idéal pour offrir — Quantités limitées chaque semaine</p>
+
+      <div class="option-list">
+        <div class="option-item">
+          <input type="radio" name="dates" id="d0" value="Aucune">
+          <label for="d0"><span>Pas de dates</span><span class="option-price">—</span></label>
+        </div>
+        <div class="option-item">
+          <input type="radio" name="dates" id="d5" value="Box 5 pièces">
+          <label for="d5"><span>Box par 5 pièces</span><span class="option-price">5€</span></label>
+        </div>
+        <div class="option-item">
+          <input type="radio" name="dates" id="d10" value="Box 10 pièces">
+          <label for="d10"><span>Box par 10 pièces</span><span class="option-price">10€</span></label>
+        </div>
+        <div class="option-item">
+          <input type="radio" name="dates" id="d15" value="Box 15 pièces">
+          <label for="d15"><span>Box par 15 pièces</span><span class="option-price">15€</span></label>
+        </div>
+        <div class="option-item">
+          <input type="radio" name="dates" id="d20" value="Box 20 pièces">
+          <label for="d20"><span>Box par 20 pièces</span><span class="option-price">20€</span></label>
+        </div>
+        <div class="option-item">
+          <input type="radio" name="dates" id="d30" value="Box 30 pièces">
+          <label for="d30"><span>Box par 30 pièces</span><span class="option-price">30€</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRANUI -->
+    <div class="form-card">
+      <div class="section-title">🍫 Franui — Framboises Chocolatées</div>
+
+      <div class="option-list">
+        <div class="option-item">
+          <input type="radio" name="franui" id="f0" value="Aucun">
+          <label for="f0"><span>Pas de Franui</span><span class="option-price">—</span></label>
+        </div>
+        <div class="option-item">
+          <input type="radio" name="franui" id="f1" value="1 pot 200g">
+          <label for="f1"><span>1 pot 200g</span><span class="option-price">5€</span></label>
+        </div>
+        <div class="option-item">
+          <input type="radio" name="franui" id="f2" value="2 pots">
+          <label for="f2"><span>2 pots</span><span class="option-price">9€</span></label>
+        </div>
+        <div class="option-item">
+          <input type="radio" name="franui" id="f3" value="3 pots">
+          <label for="f3"><span>3 pots</span><span class="option-price">13€</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGE -->
+    <div class="form-card">
+      <div class="section-title">✉ Message (optionnel)</div>
+      <textarea name="message" placeholder="Allergies, précisions, message personnalisé..."></textarea>
+    </div>
+
+    <!-- TOTAL -->
+    <div class="total-bar">
+      <span class="total-label">Total estimé</span>
+      <span class="total-amount" id="totalDisplay">0 €</span>
+    </div>
+
+    <button type="submit" class="submit-btn">✦ Envoyer ma commande ✦</button>
+
+  </form>
+
+  <!-- SUCCESS -->
+  <div class="success-msg" id="successMsg">
+    <div class="check">✨</div>
+    <h2>Commande reçue !</h2>
+    <p>Merci pour votre commande.<br>Nous vous contacterons très bientôt.</p>
+    <p style="margin-top:12px; color:rgba(201,168,76,0.6); font-size:13px;">📞 06 28 92 50 00</p>
+  </div>
+
+  <div class="footer-note">SouSweetie · Narbonne / Béziers · L'art de la gourmandise ✦</div>
+
+</div>
+
+<script>
+  const prices = { citron:5, mangue:5, framboise:5, cacahuete:5, passion:5, vanille:7 };
+  const datesPrices = { 'Aucune':0,'Box 5 pièces':5,'Box 10 pièces':10,'Box 15 pièces':15,'Box 20 pièces':20,'Box 30 pièces':30 };
+  const franuiPrices = { 'Aucun':0,'1 pot 200g':5,'2 pots':9,'3 pots':13 };
+
+  function changeQty(id, delta) {
+    const input = document.getElementById(id);
+    const display = document.getElementById(id + '-display');
+    let val = parseInt(input.value) + delta;
+    if (val < 0) val = 0;
+    if (val > 20) val = 20;
+    input.value = val;
+    display.textContent = val;
+    updateTotal();
+
+    // sparkle
+    if (delta > 0) createSparkle(event);
+  }
+
+  function updateTotal() {
+    let total = 0;
+    for (const [id, price] of Object.entries(prices)) {
+      total += parseInt(document.getElementById(id).value) * price;
+    }
+    const datesVal = document.querySelector('input[name="dates"]:checked');
+    if (datesVal) total += datesPrices[datesVal.value] || 0;
+    const franuiVal = document.querySelector('input[name="franui"]:checked');
+    if (franuiVal) total += franuiPrices[franuiVal.value] || 0;
+    document.getElementById('totalDisplay').textContent = total + ' €';
+  }
+
+  document.querySelectorAll('input[name="dates"], input[name="franui"]').forEach(r => {
+    r.addEventListener('change', updateTotal);
+  });
+
+  function createSparkle(e) {
+    const el = document.createElement('div');
+    el.className = 'sparkle';
+    el.textContent = ['✦','✨','⭐','💛'][Math.floor(Math.random()*4)];
+    el.style.left = (e.clientX + Math.random()*40-20) + 'px';
+    el.style.top = (e.clientY + Math.random()*20-10) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2000);
+  }
+
+  document.getElementById('orderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const data = new FormData(this);
+    const order = {};
+    for (let [k,v] of data.entries()) order[k] = v;
+
+    // Build readable summary
+    const patisseries = ['citron','mangue','framboise','cacahuete','passion','vanille']
+      .filter(p => parseInt(order[p]) > 0)
+      .map(p => `${p}: ${order[p]}`)
+      .join(', ');
+
+    console.log('Commande:', order);
+
+    // Show success
+    this.style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+
+    // Sparkles celebration
+    for (let i = 0; i < 12; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'sparkle';
+        el.textContent = ['✦','✨','🍋','🫐','💛'][Math.floor(Math.random()*5)];
+        el.style.left = Math.random()*100 + 'vw';
+        el.style.top = Math.random()*100 + 'vh';
+        el.style.fontSize = (10 + Math.random()*16) + 'px';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2000);
+      }, i * 150);
+    }
+  });
+</script>
+
+</body>
+</html>
