@@ -701,6 +701,57 @@ footer span { color:var(--gold); opacity:.45; }
   .franui-visual{order:-1;font-size:5rem;}
   body{cursor:auto;}
   .cursor,.cursor-ring{display:none;}
+
+  /* Hamburger */
+  .nav-burger {
+    display:flex; flex-direction:column; justify-content:center; gap:5px;
+    background:none; border:none; cursor:pointer; padding:6px; z-index:200;
+  }
+  .nav-burger span {
+    display:block; width:24px; height:2px;
+    background:var(--gold); border-radius:2px;
+    transition:all .3s ease;
+  }
+  .nav-burger.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-burger.open span:nth-child(2){ opacity:0; }
+  .nav-burger.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  .nav-links {
+    display:none; flex-direction:column; gap:0;
+    position:absolute; top:100%; left:0; right:0;
+    background:rgba(8,4,1,.98); backdrop-filter:blur(18px);
+    border-bottom:1px solid rgba(201,168,76,.18);
+    padding:8px 0;
+  }
+  .nav-links.open { display:flex; }
+  .nav-links li { width:100%; }
+  .nav-links a {
+    display:block; padding:14px 24px;
+    font-size:.9rem; letter-spacing:.15em;
+    border-bottom:1px solid rgba(201,168,76,.07);
+  }
+
+  /* Toast centré sur mobile */
+  .toast {
+    left:50% !important; right:auto !important;
+    transform:translateX(-50%) translateY(20px) !important;
+    width:88vw; text-align:center;
+    top:auto !important; bottom:24px !important;
+  }
+  .toast.show {
+    transform:translateX(-50%) translateY(0) !important;
+  }
+
+  /* Success screen centré */
+  .success-screen {
+    position:fixed !important; top:50% !important; left:50% !important;
+    transform:translate(-50%,-50%) !important;
+    width:88vw; z-index:500;
+  }
+}
+
+@media(min-width:769px){
+  .nav-burger { display:none; }
 }
 </style>
 </head>
@@ -714,12 +765,15 @@ footer span { color:var(--gold); opacity:.45; }
 <!-- NAV -->
 <nav>
   <div class="nav-logo">SouSweetie</div>
-  <ul class="nav-links">
-    <li><a href="#patisseries">Pâtisseries</a></li>
-    <li><a href="#aid">🌙 Aïd</a></li>
-    <li><a href="#dates">Dates</a></li>
-    <li><a href="#franui">Franui</a></li>
-    <li><a href="#commander">Commander</a></li>
+  <button class="nav-burger" id="navBurger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#patisseries" class="nav-link-item">Pâtisseries</a></li>
+    <li><a href="#aid" class="nav-link-item">🌙 Aïd</a></li>
+    <li><a href="#dates" class="nav-link-item">Dates</a></li>
+    <li><a href="#franui" class="nav-link-item">Franui</a></li>
+    <li><a href="#commander" class="nav-link-item">Commander</a></li>
   </ul>
 </nav>
 
@@ -1065,10 +1119,10 @@ function updateRecap() {
 }
 
 // ── TOAST ──
-function showToast(msg) {
+function showToast(msg, duration=2200) {
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
+  setTimeout(()=>t.classList.remove('show'), duration);
 }
 
 // ── SPARKLE ──
@@ -1199,17 +1253,17 @@ function changeTrompe(id, d, event) {
   if (d > 0) {
     // Bloquer vanille pour découverte
     if (id === 'vanille' && coffretQtys['decouverte'] > 0 && coffretQtys['premium'] === 0 && coffretQtys['famille'] === 0) {
-      showToast('La vanille n\'est pas disponible pour le Coffret Découverte');
+      showToast('La vanille n\'est pas disponible pour le Coffret Découverte', 4500);
       return;
     }
     // Max 1 vanille pour premium/famille
     if (id === 'vanille' && trompeChoix['vanille'] >= 1) {
-      showToast('Maximum 1 Gousse de Vanille par commande de coffret');
+      showToast('Maximum 1 Gousse de Vanille par commande de coffret', 4500);
       return;
     }
     // Bloquer vanille si seulement découverte sélectionné
     if (id === 'vanille' && coffretQtys['premium'] === 0 && coffretQtys['famille'] === 0) {
-      showToast('La vanille n\'est pas disponible pour le Coffret Découverte');
+      showToast('La vanille n\'est pas disponible pour le Coffret Découverte', 4500);
       return;
     }
     if (total >= needed) {
@@ -1388,6 +1442,20 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 
   this.style.display='none';
   document.getElementById('successScreen').style.display='block';
+});
+
+// ── HAMBURGER NAV ──
+const burger = document.getElementById('navBurger');
+const navLinks = document.getElementById('navLinks');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  navLinks.classList.toggle('open');
+});
+document.querySelectorAll('.nav-link-item').forEach(a => {
+  a.addEventListener('click', () => {
+    burger.classList.remove('open');
+    navLinks.classList.remove('open');
+  });
 });
 
 // ── REVEAL ON SCROLL ──
