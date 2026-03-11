@@ -429,6 +429,12 @@ nav {
   display:none; text-align:center; padding:70px 30px;
   animation:fadeIn .6s ease;
 }
+/* Modal overlay pour mobile */
+.success-screen.modal-active {
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  display:flex !important; flex-direction:column; align-items:center; justify-content:center;
+  background:rgba(8,4,1,.96); z-index:600; padding:30px 24px;
+}
 .success-icon { font-size:4rem; margin-bottom:20px; animation:gentleFloat 3s ease-in-out infinite; }
 .success-screen h2 {
   font-family:'Playfair Display',serif; font-size:2rem;
@@ -470,7 +476,8 @@ footer span { color:var(--gold); opacity:.45; }
   position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(10px);
   background:linear-gradient(135deg,#c9a84c,#8b6914); color:var(--dark);
   padding:11px 28px; font-family:'Cormorant Garamond',serif; font-size:.95rem; font-weight:600;
-  z-index:400; opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap;
+  z-index:1000; opacity:0; transition:all .3s; pointer-events:none;
+  white-space:normal; text-align:center; max-width:90vw;
 }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
@@ -733,20 +740,9 @@ footer span { color:var(--gold); opacity:.45; }
 
   /* Toast centré sur mobile */
   .toast {
-    left:50% !important; right:auto !important;
-    transform:translateX(-50%) translateY(20px) !important;
-    width:88vw; text-align:center;
-    top:auto !important; bottom:24px !important;
-  }
-  .toast.show {
-    transform:translateX(-50%) translateY(0) !important;
-  }
-
-  /* Success screen centré */
-  .success-screen {
-    position:fixed !important; top:50% !important; left:50% !important;
-    transform:translate(-50%,-50%) !important;
-    width:88vw; z-index:500;
+    width:88vw;
+    font-size:.9rem;
+    padding:12px 20px;
   }
 }
 
@@ -1441,7 +1437,12 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   }
 
   this.style.display='none';
-  document.getElementById('successScreen').style.display='block';
+  const ss = document.getElementById('successScreen');
+  if (window.innerWidth <= 768) {
+    ss.classList.add('modal-active');
+  } else {
+    ss.style.display='block';
+  }
 });
 
 // ── HAMBURGER NAV ──
