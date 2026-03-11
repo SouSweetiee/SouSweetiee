@@ -1329,14 +1329,13 @@ franuiOpts.forEach(f => {
 // ── FORM SUBMIT ──
 document.getElementById('orderForm').addEventListener('submit', function(e) {
   e.preventDefault();
+  const fd = new FormData(this);
 
   // Vérifier que la sélection des trompe-l'œil est complète
   const needed = getTotalTrompeNeeded();
   const choisi = getTotalTrompeChoisi();
   if (needed > 0 && choisi < needed) {
-    // Scroll vers le sélecteur
     document.getElementById('trompeSelector').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    // Message d'erreur
     const valid = document.getElementById('trompeValid');
     valid.textContent = `⚠️ Veuillez compléter votre sélection — il reste ${needed - choisi} trompe-l'œil à choisir.`;
     valid.className = 'trompe-valid error';
@@ -1354,9 +1353,9 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     showToast('⚠️ Veuillez choisir une ville de retrait');
     return;
   }
-  const nom   = fd.get('nom');
-  const tel   = fd.get('tel');
-  const ville = fd.get('ville');
+
+  const nom = fd.get('nom');
+  const tel = fd.get('tel');
 
   // Build summary
   let lines = [];
