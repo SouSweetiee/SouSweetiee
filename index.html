@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="format-detection" content="telephone=no">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SouSweetie — Passer Commande</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
@@ -763,8 +764,8 @@ footer span { color:var(--gold); opacity:.45; }
   <div class="success-icon">✨</div>
   <h2 style="font-family:'Playfair Display',serif; font-size:2rem; background:linear-gradient(135deg,#c9a84c,#f0d080); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:12px;">Commande envoyée !</h2>
   <p style="font-style:italic; color:rgba(253,246,227,.6); font-size:1.05rem; line-height:1.7; margin-bottom:28px;">Merci pour votre commande.<br>Nous vous contacterons très bientôt.<br><br>
-  <span style="background:linear-gradient(135deg,#c9a84c,#f0d080); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-family:'Playfair Display',serif; font-size:1.2rem;">📞 07 56 90 48 63</span></p>
-  <a href="#" onclick="document.getElementById('successScreen').style.display='none'; window.scrollTo({top:0,behavior:'smooth'}); return false;"
+  <span style="background:linear-gradient(135deg,#c9a84c,#f0d080); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-family:'Playfair Display',serif; font-size:1.2rem; text-decoration:none;">📞 <span style="-webkit-text-fill-color:transparent;">07 56 90 48 63</span></span></p>
+  <a href="#" onclick="resetSite(); return false;"
     style="display:inline-block; margin-top:8px; padding:12px 32px;
     border:1px solid rgba(201,168,76,.5); color:var(--gold);
     font-family:'Cormorant Garamond',serif; font-size:.85rem; letter-spacing:.2em;
@@ -994,7 +995,8 @@ footer span { color:var(--gold); opacity:.45; }
           </div>
           <div class="field">
             <label>Téléphone *</label>
-            <input type="tel" name="tel" placeholder="06 XX XX XX XX" required maxlength="10" pattern="[0-9]{10}" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)" inputmode="numeric">
+            <input type="tel" name="tel" id="telInput" placeholder="06 XX XX XX XX" required maxlength="10" pattern="[0-9]{10}" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)" inputmode="numeric">
+            <div id="telError" style="display:none;color:#e06070;font-size:.85rem;margin-top:6px;">⚠️ Veuillez entrer un numéro valide (06 ou 07)</div>
           </div>
         </div>
 
@@ -1432,6 +1434,17 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   const nom = fd.get('nom');
   const tel = fd.get('tel');
 
+  // Vérifier que le numéro commence par 06 ou 07
+  if (!tel || !/^0[67]/.test(tel)) {
+    document.getElementById('telInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('telError').style.display = 'block';
+    document.getElementById('telInput').style.borderColor = '#e06070';
+    showToast('⚠️ Numéro de téléphone invalide');
+    return;
+  }
+  document.getElementById('telError').style.display = 'none';
+  document.getElementById('telInput').style.borderColor = '';
+
   // Build summary
   let lines = [];
   patisseries.forEach(p => { if (quantities[p.id]>0) lines.push(`${p.name} ×${quantities[p.id]}`); });
@@ -1472,6 +1485,55 @@ const floatObs = new IntersectionObserver(entries => {
   floatCmd.style.pointerEvents = entries[0].isIntersecting ? 'none' : 'auto';
 }, { threshold: 0.2 });
 if (cmdSection) floatObs.observe(cmdSection);
+
+// ── RESET SITE ──
+function resetSite() {
+  // Cacher le success screen
+  document.getElementById('successScreen').style.display = 'none';
+
+  // Remettre le formulaire
+  const form = document.getElementById('orderForm');
+  form.reset();
+  form.style.display = '';
+
+  // Remettre les quantités pâtisseries à 0
+  patisseries.forEach(p => {
+    quantities[p.id] = 0;
+    const el = document.getElementById('qn-' + p.id);
+    if (el) { el.textContent = '0'; el.classList.remove('active'); }
+  });
+
+  // Remettre les coffrets à 0
+  Object.keys(coffretQtys).forEach(id => {
+    coffretQtys[id] = 0;
+    const el = document.getElementById('qn-' + id);
+    if (el) { el.textContent = '0'; el.classList.remove('active'); }
+  });
+
+  // Remettre les trompe-l'œil à 0
+  patisseries.forEach(p => trompeChoix[p.id] = 0);
+  renderTrompeSelector();
+
+  // Remettre dattes et franui à "aucun"
+  selectedBox = null;
+  document.querySelectorAll('.box-option').forEach(x => x.classList.remove('selected'));
+  document.querySelector('.box-option')?.classList.add('selected');
+
+  selectedFranui = null;
+  document.querySelectorAll('.franui-opt').forEach(x => x.classList.remove('selected'));
+  document.querySelector('.franui-opt')?.classList.add('selected');
+
+  // Remettre les erreurs
+  document.getElementById('villeError').style.display = 'none';
+  document.getElementById('telError').style.display = 'none';
+  document.getElementById('telInput').style.borderColor = '';
+
+  // Mettre à jour le récap
+  updateRecap();
+
+  // Remonter en haut
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 // ── HAMBURGER NAV ──
 const burger = document.getElementById('navBurger');
