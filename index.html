@@ -618,7 +618,7 @@ footer span { color:var(--gold); opacity:.45; }
           </div>
           <div class="field">
             <label>Téléphone *</label>
-            <input type="tel" name="tel" placeholder="06 XX XX XX XX" required>
+            <input type="tel" name="tel" placeholder="06 XX XX XX XX" required maxlength="10" pattern="[0-9]{10}" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)" inputmode="numeric">
           </div>
         </div>
 
