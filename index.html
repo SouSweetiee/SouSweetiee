@@ -686,6 +686,8 @@ footer span { color:var(--gold); opacity:.45; }
   transition: color .3s;
 }
 .trompe-valid.ok { color: #6dbe8a; }
+.trompe-valid.error { color: #e06070; font-weight: 600; animation: shake .4s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
 
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
@@ -1326,6 +1328,21 @@ franuiOpts.forEach(f => {
 // ── FORM SUBMIT ──
 document.getElementById('orderForm').addEventListener('submit', function(e) {
   e.preventDefault();
+
+  // Vérifier que la sélection des trompe-l'œil est complète
+  const needed = getTotalTrompeNeeded();
+  const choisi = getTotalTrompeChoisi();
+  if (needed > 0 && choisi < needed) {
+    // Scroll vers le sélecteur
+    document.getElementById('trompeSelector').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Message d'erreur
+    const valid = document.getElementById('trompeValid');
+    valid.textContent = `⚠️ Veuillez compléter votre sélection — il reste ${needed - choisi} trompe-l'œil à choisir.`;
+    valid.className = 'trompe-valid error';
+    showToast(`⚠️ Complétez votre sélection (${choisi}/${needed})`);
+    return;
+  }
+
   const fd = new FormData(this);
   const nom   = fd.get('nom');
   const tel   = fd.get('tel');
