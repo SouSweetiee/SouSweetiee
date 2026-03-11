@@ -205,9 +205,8 @@ nav {
   background:linear-gradient(145deg,rgba(42,29,10,.9),rgba(20,12,4,.97));
   border:1px solid rgba(201,168,76,.18);
   border-radius:2px; padding:32px 24px;
-  text-align:center; position:relative; overflow:hidden;
+  text-align:center; position:relative; overflow:visible;
   transition:transform .35s cubic-bezier(.22,.68,0,1.2),border-color .3s,box-shadow .3s;
-  cursor:pointer;
 }
 .card::before {
   content:''; position:absolute; inset:0;
@@ -247,12 +246,15 @@ nav {
 .card-qty {
   display:flex; align-items:center; justify-content:center; gap:0;
   margin-top:16px; border:1px solid rgba(201,168,76,.3); border-radius:2px; overflow:hidden;
+  position: relative; z-index: 10;
 }
 .qty-btn {
   width:34px; height:34px; background:rgba(201,168,76,.1); border:none;
-  color:var(--gold); font-size:1.1rem; cursor:pointer; transition:background .2s;
+  color:var(--gold); font-size:1.1rem; cursor:pointer !important; transition:background .2s;
   display:flex; align-items:center; justify-content:center;
   font-family:'Cormorant Garamond',serif;
+  -webkit-user-select:none; user-select:none;
+  pointer-events: all !important;
 }
 .qty-btn:hover { background:rgba(201,168,76,.25); }
 .qty-num {
@@ -744,8 +746,40 @@ function updateRecap() {
   totalEl.textContent = total + ' €';
 }
 
+// ── TOAST ──
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── SPARKLE ──
+function spawnSparkle(e) {
+  const el=document.createElement('div');
+  el.className='sparkle';
+  el.textContent=['✦','✨','💛'][Math.floor(Math.random()*3)];
+  el.style.left=(e.clientX+Math.random()*30-15)+'px';
+  el.style.top =(e.clientY+Math.random()*20-10)+'px';
+  el.style.fontSize='14px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1900);
+}
+
 // ── PATISSERIES CARDS ──
 const grid = document.getElementById('patisseriesGrid');
+function changeQty(id, d, event) {
+  event.stopPropagation();
+  event.preventDefault();
+  quantities[id] = Math.max(0, Math.min(20, quantities[id] + d));
+  const el = document.getElementById('qn-' + id);
+  el.textContent = quantities[id];
+  el.classList.toggle('active', quantities[id] > 0);
+  if (d > 0) spawnSparkle(event);
+  updateRecap();
+  const p = patisseries.find(x => x.id === id);
+  showToast(d > 0 ? `${p.name} ajouté ✦` : `${p.name} retiré`);
+}
+
 patisseries.forEach(p => {
   const card = document.createElement('div');
   card.className = 'card reveal';
@@ -755,31 +789,32 @@ patisseries.forEach(p => {
     <div class="card-desc">${p.desc}</div>
     <div class="price-tag">${p.price}€ / pièce</div>
     <div class="card-qty">
-      <button type="button" class="qty-btn" data-id="${p.id}" data-d="-1">−</button>
+      <button type="button" class="qty-btn" onclick="changeQty('${p.id}', -1, event)">−</button>
       <div class="qty-num" id="qn-${p.id}">0</div>
-      <button type="button" class="qty-btn" data-id="${p.id}" data-d="1">+</button>
+      <button type="button" class="qty-btn" onclick="changeQty('${p.id}', 1, event)">+</button>
     </div>`;
   grid.appendChild(card);
 });
 
-document.addEventListener('click', e => {
-  const btn = e.target.closest('.qty-btn');
-  if (!btn) return;
-  const id = btn.dataset.id;
-  const d  = parseInt(btn.dataset.d);
-  quantities[id] = Math.max(0, Math.min(20, quantities[id] + d));
-  const el = document.getElementById('qn-' + id);
-  el.textContent = quantities[id];
-  el.classList.toggle('active', quantities[id] > 0);
-  if (d > 0) spawnSparkle(e);
-  updateRecap();
-  showToast(d > 0
-    ? `${patisseries.find(x=>x.id===id).name} ajouté ✦`
-    : `${patisseries.find(x=>x.id===id).name} retiré`);
-});
-
 // ── BOXES ──
 const boxGrid = document.getElementById('boxesGrid');
+
+// Option "Pas de dates"
+const noDatesEl = document.createElement('div');
+noDatesEl.className = 'box-option selected';
+noDatesEl.innerHTML = `
+  <span class="box-qty-lbl" style="font-size:1.1rem;">✕</span>
+  <span class="box-price-lbl" style="font-size:.9rem;">Aucune</span>
+  <span class="box-sub">dates</span>`;
+noDatesEl.onclick = () => {
+  document.querySelectorAll('.box-option').forEach(x=>x.classList.remove('selected'));
+  noDatesEl.classList.add('selected');
+  selectedBox = null;
+  updateRecap();
+  showToast('Pas de dates sélectionné');
+};
+boxGrid.appendChild(noDatesEl);
+
 boxes.forEach(b => {
   const el = document.createElement('div');
   el.className = 'box-option';
@@ -789,20 +824,30 @@ boxes.forEach(b => {
     <span class="box-sub">dates</span>`;
   el.onclick = () => {
     document.querySelectorAll('.box-option').forEach(x=>x.classList.remove('selected'));
-    if (selectedBox && selectedBox.qty === b.qty) {
-      selectedBox = null;
-    } else {
-      el.classList.add('selected');
-      selectedBox = b;
-      showToast(`Box ×${b.qty} sélectionnée ✦`);
-    }
+    el.classList.add('selected');
+    selectedBox = b;
     updateRecap();
+    showToast(`Box ×${b.qty} sélectionnée ✦`);
   };
   boxGrid.appendChild(el);
 });
 
 // ── FRANUI ──
 const franuiEl = document.getElementById('franuiOptions');
+
+// Option "Pas de Franui"
+const noFranuiEl = document.createElement('div');
+noFranuiEl.className = 'franui-opt selected';
+noFranuiEl.innerHTML = `<span class="franui-opt-label">✕ Pas de Franui</span><span class="franui-opt-price">—</span>`;
+noFranuiEl.onclick = () => {
+  document.querySelectorAll('.franui-opt').forEach(x=>x.classList.remove('selected'));
+  noFranuiEl.classList.add('selected');
+  selectedFranui = null;
+  updateRecap();
+  showToast('Pas de Franui sélectionné');
+};
+franuiEl.appendChild(noFranuiEl);
+
 franuiOpts.forEach(f => {
   const el = document.createElement('div');
   el.className = 'franui-opt';
@@ -858,25 +903,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   this.style.display='none';
   document.getElementById('successScreen').style.display='block';
 });
-
-// ── TOAST ──
-function showToast(msg) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
-
-// ── SPARKLE on click ──
-function spawnSparkle(e) {
-  const el=document.createElement('div');
-  el.className='sparkle';
-  el.textContent=['✦','✨','💛'][Math.floor(Math.random()*3)];
-  el.style.left=(e.clientX+Math.random()*30-15)+'px';
-  el.style.top =(e.clientY+Math.random()*20-10)+'px';
-  el.style.fontSize='14px';
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(),1900);
-}
 
 // ── REVEAL ON SCROLL ──
 const obs=new IntersectionObserver(entries=>{
