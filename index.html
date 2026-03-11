@@ -758,6 +758,14 @@ footer span { color:var(--gold); opacity:.45; }
 <div id="particles"></div>
 <div class="toast" id="toast"></div>
 
+<!-- SUCCESS MODAL -->
+<div id="successScreen" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(8,4,1,.97); z-index:900; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 28px;">
+  <div class="success-icon">✨</div>
+  <h2 style="font-family:'Playfair Display',serif; font-size:2rem; background:linear-gradient(135deg,#c9a84c,#f0d080); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:12px;">Commande envoyée !</h2>
+  <p style="font-style:italic; color:rgba(253,246,227,.6); font-size:1.05rem; line-height:1.7;">Merci pour votre commande.<br>Nous vous contacterons très bientôt.<br><br>
+  <span style="color:var(--gold);font-family:'Playfair Display',serif;">📞 07 56 90 48 63</span></p>
+</div>
+
 <!-- NAV -->
 <nav>
   <div class="nav-logo">SouSweetie</div>
@@ -941,13 +949,6 @@ footer span { color:var(--gold); opacity:.45; }
     <div class="order-section reveal">
 
       <!-- SUCCESS -->
-      <div class="success-screen" id="successScreen">
-        <div class="success-icon">✨</div>
-        <h2>Commande envoyée !</h2>
-        <p>Merci pour votre commande.<br>Nous vous contacterons très bientôt.<br><br>
-        <span style="color:var(--gold);font-family:'Playfair Display',serif;">📞 07 56 90 48 63</span></p>
-      </div>
-
       <form id="orderForm">
 
         <!-- RECAP -->
@@ -1438,11 +1439,7 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 
   this.style.display='none';
   const ss = document.getElementById('successScreen');
-  if (window.innerWidth <= 768) {
-    ss.classList.add('modal-active');
-  } else {
-    ss.style.display='block';
-  }
+  ss.style.display='flex';
 });
 
 // ── HAMBURGER NAV ──
