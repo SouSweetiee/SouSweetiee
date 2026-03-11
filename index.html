@@ -362,6 +362,7 @@ nav {
 
 /* Ville radio */
 .radio-row { display:flex; gap:12px; }
+.radio-row.error { border: 1px solid #e06070; border-radius: 2px; padding: 6px; animation: shake .4s ease; }
 .radio-card { flex:1; }
 .radio-card input[type=radio] { display:none; }
 .radio-card label {
@@ -1343,7 +1344,16 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     return;
   }
 
-  const fd = new FormData(this);
+  // Vérifier que la ville est sélectionnée
+  const ville = fd.get('ville');
+  if (!ville) {
+    document.getElementById('v-narb').closest('.field').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const radioRow = document.querySelector('.radio-row');
+    radioRow.classList.add('error');
+    setTimeout(() => radioRow.classList.remove('error'), 1500);
+    showToast('⚠️ Veuillez choisir une ville de retrait');
+    return;
+  }
   const nom   = fd.get('nom');
   const tel   = fd.get('tel');
   const ville = fd.get('ville');
