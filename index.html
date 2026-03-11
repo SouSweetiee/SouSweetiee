@@ -266,14 +266,14 @@ nav {
 }
 .qty-num.active { color:var(--gold-light); }
 
-/* ── DATES FOURRÉES ── */
+/* ── DATTES FOURRÉES ── */
 .dates-section {
   background:linear-gradient(135deg,rgba(42,29,10,.8),rgba(12,7,2,.96));
   border:1px solid rgba(201,168,76,.22); padding:56px 50px;
   text-align:center; position:relative; overflow:hidden;
 }
 .dates-section::before {
-  content:'✦  DATES FOURRÉES  ✦';
+  content:'✦  DATTES FOURRÉES  ✦';
   position:absolute; top:18px; left:50%; transform:translateX(-50%);
   font-size:.65rem; letter-spacing:.4em; color:var(--gold); opacity:.45; white-space:nowrap;
 }
@@ -714,7 +714,7 @@ footer span { color:var(--gold); opacity:.45; }
   <ul class="nav-links">
     <li><a href="#patisseries">Pâtisseries</a></li>
     <li><a href="#aid">🌙 Aïd</a></li>
-    <li><a href="#dates">Dates</a></li>
+    <li><a href="#dates">Dattes</a></li>
     <li><a href="#franui">Franui</a></li>
     <li><a href="#commander">Commander</a></li>
   </ul>
@@ -850,7 +850,7 @@ footer span { color:var(--gold); opacity:.45; }
 <section id="dates">
   <div class="section-wrap">
     <div class="section-label">Idéal pour offrir</div>
-    <h2 class="section-title reveal">Dates <span>Fourrées</span></h2>
+    <h2 class="section-title reveal">Dattes <span>Fourrées</span></h2>
     <div class="dates-section reveal">
       <p class="dates-subtitle">Choisissez votre box</p>
       <div class="boxes-grid" id="boxesGrid"></div>
@@ -1042,7 +1042,7 @@ function updateRecap() {
 
   if (selectedBox) {
     total += selectedBox.price;
-    items.push({ name:`🌴 Dates Fourrées ×${selectedBox.qty}`, price:selectedBox.price });
+    items.push({ name:`🌴 Dattes Fourrées ×${selectedBox.qty}`, price:selectedBox.price });
   }
 
   if (selectedFranui) {
@@ -1224,7 +1224,7 @@ for (let i = 0; i < 40; i++) {
 }
 const boxGrid = document.getElementById('boxesGrid');
 
-// Option "Pas de dates"
+// Option "Pas de dattes"
 const noDatesEl = document.createElement('div');
 noDatesEl.className = 'box-option selected';
 noDatesEl.innerHTML = `
@@ -1236,7 +1236,7 @@ noDatesEl.onclick = () => {
   noDatesEl.classList.add('selected');
   selectedBox = null;
   updateRecap();
-  showToast('Pas de dates sélectionné');
+  showToast('Pas de dattes sélectionné');
 };
 boxGrid.appendChild(noDatesEl);
 
@@ -1302,7 +1302,7 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   // Build summary
   let lines = [];
   patisseries.forEach(p => { if (quantities[p.id]>0) lines.push(`${p.name} ×${quantities[p.id]}`); });
-  if (selectedBox)    lines.push(`Dates Fourrées ×${selectedBox.qty}`);
+  if (selectedBox)    lines.push(`Dattes Fourrées ×${selectedBox.qty}`);
   if (selectedFranui) lines.push(`Franui ${selectedFranui.label}`);
 
   const total = patisseries.reduce((a,p)=>a+quantities[p.id]*p.price,0)
