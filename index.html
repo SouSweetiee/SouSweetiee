@@ -961,6 +961,17 @@ footer span { color:var(--gold); opacity:.45; }
       <p class="trompe-valid" id="trompeValid"></p>
     </div>
 
+    <!-- SÉLECTEUR DATTES COFFRET -->
+    <div class="trompe-selector" id="coffretDattesSelector" style="display:none;">
+      <div class="trompe-selector-title">
+        <span>🌴</span> Choisissez vos dattes fourrées
+        <span class="trompe-counter" id="coffretDattesCounter"></span>
+      </div>
+      <p class="trompe-hint" id="coffretDattesHint"></p>
+      <div class="trompe-grid" id="coffretDattesGrid"></div>
+      <p class="trompe-valid" id="coffretDattesValid"></p>
+    </div>
+
     <!-- SURPRISE AÏD -->
     <div class="surprise-aid reveal">
       <div class="surprise-gift">🎁</div>
@@ -1354,11 +1365,27 @@ function updateRecap() {
       const c = coffrets[id];
       const sub = c.price * qty;
       total += sub;
+
       const trompeLines = patisseries
         .filter(p => trompeChoix[p.id] > 0)
         .map(p => `• ${p.name} ×${trompeChoix[p.id]}`)
         .join('<br>');
-      const detail = trompeLines ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${trompeLines}</span>` : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos parfums ci-dessus</span>`;
+
+      let detail = trompeLines
+        ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${trompeLines}</span>`
+        : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos parfums ci-dessus</span>`;
+
+      if (id === 'premium' || id === 'famille') {
+        const datteLines = dattesGouts
+          .filter(g => coffretDattesChoix[g] > 0)
+          .map(g => `• ${g} ×${coffretDattesChoix[g]}`)
+          .join('<br>');
+
+        detail += datteLines
+          ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${datteLines}</span>`
+          : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos dattes ci-dessus</span>`;
+      }
+
       items.push({ name:`${c.emoji} ${c.name} ×${qty}${detail}`, price:sub });
     }
   });
@@ -1405,7 +1432,6 @@ function spawnSparkle(e) {
   el.textContent=['✦','✨','💛'][Math.floor(Math.random()*3)];
   el.style.left=(e.clientX+Math.random()*30-15)+'px';
   el.style.top =(e.clientY+Math.random()*20-10)+'px';
-  el.style.fontSize='14px';
   document.body.appendChild(el);
   setTimeout(()=>el.remove(),1900);
 }
@@ -1461,6 +1487,14 @@ patisseries.forEach(p => {
 const trompeChoix = {}; // { citron: 2, mangue: 1, ... }
 patisseries.forEach(p => trompeChoix[p.id] = 0);
 
+const coffretDattesChoix = {}; // { Raffaelo: 2, ... }
+dattesGouts.forEach(g => coffretDattesChoix[g] = 0);
+
+const coffretDattesMax = {
+  premium: 5,
+  famille: 10
+};
+
 const coffretMaxTrompe = { decouverte: 4, premium: 6, famille: 6 };
 
 function getTotalTrompeNeeded() {
@@ -1469,6 +1503,14 @@ function getTotalTrompeNeeded() {
 
 function getTotalTrompeChoisi() {
   return Object.values(trompeChoix).reduce((a,v) => a+v, 0);
+}
+
+function getTotalCoffretDattesNeeded() {
+  return (coffretQtys.premium * coffretDattesMax.premium) + (coffretQtys.famille * coffretDattesMax.famille);
+}
+
+function getTotalCoffretDattesChoisi() {
+  return Object.values(coffretDattesChoix).reduce((a, v) => a + v, 0);
 }
 
 function renderTrompeSelector() {
@@ -1520,6 +1562,55 @@ function renderTrompeSelector() {
   }
 }
 
+function renderCoffretDattesSelector() {
+  const needed = getTotalCoffretDattesNeeded();
+  const selector = document.getElementById('coffretDattesSelector');
+  const grid = document.getElementById('coffretDattesGrid');
+  const hint = document.getElementById('coffretDattesHint');
+  const counter = document.getElementById('coffretDattesCounter');
+  const valid = document.getElementById('coffretDattesValid');
+
+  if (needed === 0) {
+    selector.style.display = 'none';
+    return;
+  }
+
+  selector.style.display = 'block';
+  const choisi = getTotalCoffretDattesChoisi();
+
+  hint.textContent = `Sélectionnez exactement ${needed} dattes fourrées pour vos coffrets Premium / Famille`;
+  counter.textContent = `${choisi} / ${needed} choisie${choisi > 1 ? 's' : ''}`;
+
+  grid.innerHTML = '';
+  dattesGouts.forEach(g => {
+    const qty = coffretDattesChoix[g];
+    const div = document.createElement('div');
+    div.className = 'trompe-item' + (qty > 0 ? ' selected' : '');
+    div.innerHTML = `
+      <div class="trompe-item-qty">${qty}</div>
+      <span class="trompe-item-emoji">${dattesEmoji[g]}</span>
+      <span class="trompe-item-name">${g}</span>
+      <span class="trompe-item-price">Dattes coffret</span>
+      <div class="trompe-item-btns">
+        <button type="button" onclick="changeCoffretDatte('${g}',-1,event)">−</button>
+        <span>${qty}</span>
+        <button type="button" onclick="changeCoffretDatte('${g}',1,event)">+</button>
+      </div>`;
+    grid.appendChild(div);
+  });
+
+  if (choisi === needed) {
+    valid.textContent = '✦ Parfait ! Votre sélection de dattes est complète.';
+    valid.className = 'trompe-valid ok';
+  } else if (choisi > needed) {
+    valid.textContent = `Vous avez sélectionné ${choisi - needed} dattes en trop.`;
+    valid.className = 'trompe-valid error';
+  } else {
+    valid.textContent = `Il reste ${needed - choisi} dattes à choisir.`;
+    valid.className = 'trompe-valid';
+  }
+}
+
 function changeTrompe(id, d, event) {
   event.stopPropagation();
   event.preventDefault();
@@ -1554,6 +1645,26 @@ function changeTrompe(id, d, event) {
   updateRecap();
 }
 
+function changeCoffretDatte(gout, d, event) {
+  event.stopPropagation();
+  event.preventDefault();
+
+  const needed = getTotalCoffretDattesNeeded();
+  const total = getTotalCoffretDattesChoisi();
+
+  if (d > 0 && total >= needed) {
+    showToast('Vous avez déjà atteint le nombre requis de dattes !');
+    return;
+  }
+
+  coffretDattesChoix[gout] = Math.max(0, coffretDattesChoix[gout] + d);
+
+  if (d > 0) spawnSparkle(event);
+
+  renderCoffretDattesSelector();
+  updateRecap();
+}
+
 // ── COFFRETS AÏD ──
 const coffrets = {
   decouverte: { name: 'Coffret Aïd Découverte', emoji: '🎁', price: 17 },
@@ -1572,6 +1683,7 @@ function changeCoffretQty(id, d, event) {
   if (d > 0) spawnSparkle(event);
   updateRecap();
   renderTrompeSelector();
+  renderCoffretDattesSelector();
   showToast(d > 0 ? `${coffrets[id].name} ajouté ✦` : `${coffrets[id].name} retiré`);
 }
 
@@ -1745,6 +1857,18 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     return;
   }
 
+  // Vérifier que la sélection des dattes des coffrets est complète
+  const neededCoffretDattes = getTotalCoffretDattesNeeded();
+  const choisiCoffretDattes = getTotalCoffretDattesChoisi();
+  if (neededCoffretDattes > 0 && choisiCoffretDattes < neededCoffretDattes) {
+    document.getElementById('coffretDattesSelector').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const valid = document.getElementById('coffretDattesValid');
+    valid.textContent = `⚠️ Veuillez compléter votre sélection — il reste ${neededCoffretDattes - choisiCoffretDattes} dattes à choisir.`;
+    valid.className = 'trompe-valid error';
+    showToast(`⚠️ Complétez vos dattes coffret (${choisiCoffretDattes}/${neededCoffretDattes})`);
+    return;
+  }
+
   // Vérifier que les goûts dattes sont complets
   if (selectedBox) {
     const dattesTotal = Object.values(dattesChoix).reduce((a,v)=>a+v,0);
@@ -1802,7 +1926,7 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   let lines = [];
   patisseries.forEach(p => { if (quantities[p.id]>0) lines.push(`${p.name} ×${quantities[p.id]}`); });
 
-  // Coffrets avec détail des parfums
+  // Coffrets avec détail des parfums et dattes
   Object.entries(coffretQtys).forEach(([id, qty]) => {
     if (qty > 0) {
       const c = coffrets[id];
@@ -1810,7 +1934,17 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
         .filter(p => trompeChoix[p.id] > 0)
         .map(p => `${p.name} ×${trompeChoix[p.id]}`)
         .join(', ');
-      lines.push(`${c.name} ×${qty}${parfums ? ` → ${parfums}` : ''}`);
+
+      if (id === 'premium' || id === 'famille') {
+        const dattesCoffret = dattesGouts
+          .filter(g => coffretDattesChoix[g] > 0)
+          .map(g => `${g} ×${coffretDattesChoix[g]}`)
+          .join(', ');
+
+        lines.push(`${c.name} ×${qty}${parfums ? ` → Trompe-l'œil : ${parfums}` : ''}${dattesCoffret ? ` | Dattes : ${dattesCoffret}` : ''}`);
+      } else {
+        lines.push(`${c.name} ×${qty}${parfums ? ` → Trompe-l'œil : ${parfums}` : ''}`);
+      }
     }
   });
 
@@ -1896,6 +2030,10 @@ function resetSite() {
   // Remettre les trompe-l'œil à 0
   patisseries.forEach(p => trompeChoix[p.id] = 0);
   renderTrompeSelector();
+
+  // Remettre les dattes des coffrets à 0
+  dattesGouts.forEach(g => coffretDattesChoix[g] = 0);
+  renderCoffretDattesSelector();
 
   // Remettre dattes et franui à "aucun"
   selectedBox = null;
