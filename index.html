@@ -1456,7 +1456,20 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     + (selectedBox?selectedBox.price:0)
     + (selectedFranui?selectedFranui.price:0);
 
-  console.log('Commande', {nom,tel,ville,lines,total});
+  // Envoi vers Google Sheets
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzx06nf6ghr2iCM4EHSPGxmnsJ268krHRUHOsprF4oK51ze-u9SD7wlw3PcdeYj6rGbBQ/exec';
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      nom: nom,
+      tel: tel,
+      ville: ville,
+      commande: lines.join(' | '),
+      total: total
+    })
+  }).catch(err => console.error('Erreur envoi commande:', err));
 
   // Confetti
   for (let i=0;i<18;i++) {
