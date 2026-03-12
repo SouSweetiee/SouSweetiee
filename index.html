@@ -1814,7 +1814,10 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     }
   });
 
-  if (selectedBox)    lines.push(`Dattes Fourrées ×${selectedBox.qty}`);
+  if (selectedBox) {
+    const goutsList = dattesGouts.filter(g => dattesChoix[g] > 0).map(g => `${g} ×${dattesChoix[g]}`).join(', ');
+    lines.push(`Dattes Fourrées ×${selectedBox.qty}${goutsList ? ` → ${goutsList}` : ''}`);
+  }
   if (selectedFranui) lines.push(`Franui ${selectedFranui.label}`);
 
   const total = patisseries.reduce((a,p)=>a+quantities[p.id]*p.price,0)
