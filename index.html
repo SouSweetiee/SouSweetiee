@@ -4,7 +4,24 @@
 <meta charset="UTF-8">
 <meta name="format-detection" content="telephone=no">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SouSweetie — Passer Commande</title>
+
+<title>SouSweetie</title>
+
+<meta name="description" content="SouSweetie — Pâtisseries trompe-l'œil artisanales à Narbonne & Béziers. Commandez vos desserts uniques pour l'Aïd ou toute occasion.">
+
+<!-- Open Graph -->
+<meta property="og:title" content="SouSweetie">
+<meta property="og:description" content="Pâtisseries trompe-l'œil artisanales · Narbonne & Béziers">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sousweetiee.github.io/SouSweetiee/">
+<meta property="og:image" content="https://raw.githubusercontent.com/SouSweetiee/SouSweetiee/main/framboise.png">
+
+<!-- Twitter / WhatsApp -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SouSweetie">
+<meta name="twitter:description" content="Pâtisseries trompe-l'œil artisanales · Narbonne & Béziers">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/SouSweetiee/SouSweetiee/main/framboise.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1323,7 +1340,7 @@ const boxes = [
 ];
 
 const dattesGouts = ['Raffaelo','Spéculos','Noisette','Pralinée','Caramel beurre salé'];
-const dattesChoix = {}; // { Raffaelo: 2, ... }
+const dattesChoix = {};
 dattesGouts.forEach(g => dattesChoix[g] = 0);
 
 const dattesEmoji = {
@@ -1338,7 +1355,7 @@ const franuiOpts = [
 ];
 
 // ── STATE ──
-const quantities = {}; // patisseries
+const quantities = {};
 let selectedBox    = null;
 let selectedFranui = null;
 
@@ -1359,7 +1376,6 @@ function updateRecap() {
     }
   });
 
-  // Coffrets Aïd
   Object.entries(coffretQtys).forEach(([id, qty]) => {
     if (qty > 0) {
       const c = coffrets[id];
@@ -1484,10 +1500,10 @@ patisseries.forEach(p => {
 });
 
 // ── TROMPE-L'ŒIL SELECTOR ──
-const trompeChoix = {}; // { citron: 2, mangue: 1, ... }
+const trompeChoix = {};
 patisseries.forEach(p => trompeChoix[p.id] = 0);
 
-const coffretDattesChoix = {}; // { Raffaelo: 2, ... }
+const coffretDattesChoix = {};
 dattesGouts.forEach(g => coffretDattesChoix[g] = 0);
 
 const coffretDattesMax = {
@@ -1531,7 +1547,6 @@ function renderTrompeSelector() {
   hint.textContent = `Sélectionnez exactement ${needed} trompe-l'œil pour vos coffrets`;
   counter.textContent = `${choisi} / ${needed} choisi${choisi>1?'s':''}`;
 
-  // Render items
   grid.innerHTML = '';
   patisseries.forEach(p => {
     const qty = trompeChoix[p.id];
@@ -1618,17 +1633,14 @@ function changeTrompe(id, d, event) {
   const total = getTotalTrompeChoisi();
 
   if (d > 0) {
-    // Bloquer vanille pour découverte
     if (id === 'vanille' && coffretQtys['decouverte'] > 0 && coffretQtys['premium'] === 0 && coffretQtys['famille'] === 0) {
       showToast('La vanille n\'est pas disponible pour le Coffret Découverte', 4500);
       return;
     }
-    // Max 1 vanille pour premium/famille
     if (id === 'vanille' && trompeChoix['vanille'] >= 1) {
       showToast('Maximum 1 Gousse de Vanille par commande de coffret', 4500);
       return;
     }
-    // Bloquer vanille si seulement découverte sélectionné
     if (id === 'vanille' && coffretQtys['premium'] === 0 && coffretQtys['famille'] === 0) {
       showToast('La vanille n\'est pas disponible pour le Coffret Découverte', 4500);
       return;
@@ -1730,7 +1742,6 @@ boxes.forEach(b => {
     document.querySelectorAll('.box-option').forEach(x=>x.classList.remove('selected'));
     el.classList.add('selected');
     selectedBox = b;
-    // Reset goûts dattes
     dattesGouts.forEach(g => dattesChoix[g] = 0);
     renderDattesSelector();
     updateRecap();
@@ -1809,7 +1820,6 @@ function changeDatte(gout, d, event) {
 // ── FRANUI ──
 const franuiEl = document.getElementById('franuiOptions');
 
-// Option "Pas de Franui"
 const noFranuiEl = document.createElement('div');
 noFranuiEl.className = 'franui-opt selected';
 noFranuiEl.innerHTML = `<span class="franui-opt-label">✕ Pas de Franui</span><span class="franui-opt-price">—</span>`;
@@ -1845,7 +1855,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const fd = new FormData(this);
 
-  // Vérifier que la sélection des trompe-l'œil est complète
   const needed = getTotalTrompeNeeded();
   const choisi = getTotalTrompeChoisi();
   if (needed > 0 && choisi < needed) {
@@ -1857,7 +1866,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     return;
   }
 
-  // Vérifier que la sélection des dattes des coffrets est complète
   const neededCoffretDattes = getTotalCoffretDattesNeeded();
   const choisiCoffretDattes = getTotalCoffretDattesChoisi();
   if (neededCoffretDattes > 0 && choisiCoffretDattes < neededCoffretDattes) {
@@ -1869,7 +1877,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     return;
   }
 
-  // Vérifier que les goûts dattes sont complets
   if (selectedBox) {
     const dattesTotal = Object.values(dattesChoix).reduce((a,v)=>a+v,0);
     if (dattesTotal < selectedBox.qty) {
@@ -1882,7 +1889,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     }
   }
 
-  // Vérifier que la ville est sélectionnée
   const ville = fd.get('ville');
   if (!ville) {
     document.getElementById('villeRadioRow').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1900,13 +1906,10 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   const tel = telRaw.startsWith('0') ? telRaw : '0' + telRaw;
   const message = fd.get('message') || '';
 
-  // Validation selon le pays
   let telValide = true;
   if (indicatif === '+33') {
-    // France : 06 ou 07, 10 chiffres
     telValide = /^0[67][0-9]{8}$/.test(tel);
   } else {
-    // Autres pays : minimum 6 chiffres
     telValide = telRaw.length >= 6;
   }
 
@@ -1922,11 +1925,9 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 
   const telComplet = indicatif + ' ' + (indicatif === '+33' ? tel : telRaw);
 
-  // Build summary — une ligne par article
   let lines = [];
   patisseries.forEach(p => { if (quantities[p.id]>0) lines.push(`${p.name} ×${quantities[p.id]}`); });
 
-  // Coffrets avec détail des parfums et dattes
   Object.entries(coffretQtys).forEach(([id, qty]) => {
     if (qty > 0) {
       const c = coffrets[id];
@@ -1959,7 +1960,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     + (selectedBox?selectedBox.price:0)
     + (selectedFranui?selectedFranui.price:0);
 
-  // Envoi vers Google Sheets
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLmIwq2WewReiOTsH_kH9ldPQfJ3beHEtnqBNXfC95xdNmArN72mPjiTwcuSQffYFz1A/exec';
   fetch(SCRIPT_URL, {
     method: 'POST',
@@ -1975,7 +1975,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     })
   }).catch(err => console.error('Erreur envoi commande:', err));
 
-  // Confetti
   for (let i=0;i<18;i++) {
     setTimeout(()=>{
       const el = document.createElement('div');
@@ -2005,37 +2004,30 @@ if (cmdSection) floatObs.observe(cmdSection);
 
 // ── RESET SITE ──
 function resetSite() {
-  // Cacher le success screen
   document.getElementById('successScreen').style.display = 'none';
 
-  // Remettre le formulaire
   const form = document.getElementById('orderForm');
   form.reset();
   form.style.display = '';
 
-  // Remettre les quantités pâtisseries à 0
   patisseries.forEach(p => {
     quantities[p.id] = 0;
     const el = document.getElementById('qn-' + p.id);
     if (el) { el.textContent = '0'; el.classList.remove('active'); }
   });
 
-  // Remettre les coffrets à 0
   Object.keys(coffretQtys).forEach(id => {
     coffretQtys[id] = 0;
     const el = document.getElementById('qn-' + id);
     if (el) { el.textContent = '0'; el.classList.remove('active'); }
   });
 
-  // Remettre les trompe-l'œil à 0
   patisseries.forEach(p => trompeChoix[p.id] = 0);
   renderTrompeSelector();
 
-  // Remettre les dattes des coffrets à 0
   dattesGouts.forEach(g => coffretDattesChoix[g] = 0);
   renderCoffretDattesSelector();
 
-  // Remettre dattes et franui à "aucun"
   selectedBox = null;
   dattesGouts.forEach(g => dattesChoix[g] = 0);
   renderDattesSelector();
@@ -2046,16 +2038,12 @@ function resetSite() {
   document.querySelectorAll('.franui-opt').forEach(x => x.classList.remove('selected'));
   document.querySelector('.franui-opt')?.classList.add('selected');
 
-  // Remettre les erreurs
   document.getElementById('villeError').style.display = 'none';
   document.getElementById('telError').style.display = 'none';
   document.getElementById('telInput').style.borderColor = '';
   document.getElementById('indicatif').value = '+33';
 
-  // Mettre à jour le récap
   updateRecap();
-
-  // Remonter en haut
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
