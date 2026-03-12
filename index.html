@@ -239,8 +239,21 @@ nav {
 }
 .price-tag {
   font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:900;
+  color: var(--gold-light);
+  display:flex; align-items:baseline; justify-content:center; gap:6px; flex-wrap:wrap;
+}
+.price-tag .old-price {
+  font-size:.95rem; font-weight:400;
+  text-decoration:line-through; opacity:.4; color:var(--cream);
+  -webkit-text-fill-color: initial;
+}
+.price-tag .new-price {
   background:linear-gradient(135deg,#c9a84c,#f0d080);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.price-tag .per-piece {
+  font-size:.8rem; font-weight:400; opacity:.55;
+  -webkit-text-fill-color: initial; color:var(--cream);
 }
 
 /* Qty controls on card */
@@ -274,7 +287,7 @@ nav {
   text-align:center; position:relative; overflow:hidden;
 }
 .dates-section::before {
-  content:'✦  DATES FOURRÉES  ✦';
+  content:'✦  DATTES FOURRÉES  ✦';
   position:absolute; top:18px; left:50%; transform:translateX(-50%);
   font-size:.65rem; letter-spacing:.4em; color:var(--gold); opacity:.45; white-space:nowrap;
 }
@@ -813,6 +826,34 @@ footer span { color:var(--gold); opacity:.45; }
     <div class="logo-sub">Pâtisseries Trompe-l'Œil</div>
     <div class="logo-tag">L'art de la gourmandise</div>
   </div>
+
+  <!-- OFFRE SPÉCIALE -->
+  <div style="
+    margin: 24px auto 0;
+    max-width: 420px;
+    border: 1px solid rgba(201,168,76,.5);
+    background: rgba(201,168,76,.08);
+    padding: 14px 28px;
+    text-align: center;
+    position: relative;
+    animation: fadeIn .8s ease .3s both;">
+    <div style="
+      position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+      background:var(--dark2); padding:0 12px;
+      font-size:.6rem; letter-spacing:.35em; text-transform:uppercase;
+      color:var(--gold); white-space:nowrap;">✦ Offre Spéciale ✦</div>
+    <div style="
+      font-family:'Playfair Display',serif;
+      font-size:1.25rem; font-weight:700;
+      background:linear-gradient(135deg,#c9a84c,#f0d080,#c9a84c);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">
+      Du 09 au 23 Mars
+    </div>
+    <div style="font-size:.8rem; opacity:.6; margin-top:4px; letter-spacing:.1em;">
+      Prix remisés sur toute la collection
+    </div>
+  </div>
+
   <div class="hero-divider"></div>
   <div class="scroll-cta" onclick="document.getElementById('patisseries').scrollIntoView({behavior:'smooth'})">
     Découvrir &amp; Commander
@@ -939,6 +980,14 @@ footer span { color:var(--gold); opacity:.45; }
     <div class="dates-section reveal">
       <p class="dates-subtitle">Choisissez votre box</p>
       <div class="boxes-grid" id="boxesGrid"></div>
+
+      <!-- SÉLECTEUR GOÛTS DATTES -->
+      <div id="dattesSelector" style="display:none; margin-top:28px;">
+        <p style="text-align:center;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);opacity:.7;margin-bottom:14px;" id="dattesHint"></p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;" id="dattesGrid"></div>
+        <p style="text-align:center;margin-top:12px;font-size:.85rem;" id="dattesValid"></p>
+      </div>
+
       <p class="limited-note">✦ Quantités limitées chaque semaine ✦</p>
     </div>
   </div>
@@ -1250,17 +1299,26 @@ footer span { color:var(--gold); opacity:.45; }
 <script>
 // ── DATA ──
 const patisseries = [
-  { id:'citron',    name:'Citron',           emoji:'🍋', price:5,  desc:'Trompe-l\'œil acidulé et frais, une illusion gustative parfaite' },
-  { id:'mangue',    name:'Mangue',           emoji:'🥭', price:5,  desc:'Exotisme tropical encapsulé dans une pâtisserie surprenante' },
-  { id:'framboise', name:'Framboise', emoji:'🍓', price:5, desc:'Fraîcheur et élégance dans une forme en cœur délicate' },
-  { id:'cacahuete', name:'Cacahuète',        emoji:'🥜', price:5,  desc:'Gourmandise croquante au design naturel bluffant' },
-  { id:'passion',   name:'Passion',          emoji:'🌺', price:5,  desc:'L\'intensité du fruit de la passion sublimée en art pâtissier' },
-  { id:'vanille',   name:'Gousse de Vanille',emoji:'🌿', price:7,  desc:'La reine des saveurs, un chef-d\'œuvre trompe-l\'œil floral' },
+  { id:'citron',    name:'Citron',           emoji:'🍋', price:5, priceNormal:6,  desc:'Trompe-l\'œil acidulé et frais, une illusion gustative parfaite' },
+  { id:'mangue',    name:'Mangue',           emoji:'🥭', price:5, priceNormal:6,  desc:'Exotisme tropical encapsulé dans une pâtisserie surprenante' },
+  { id:'framboise', name:'Framboise', emoji:'🍓', price:5, priceNormal:6, desc:'Fraîcheur et élégance dans une forme en cœur délicate' },
+  { id:'cacahuete', name:'Cacahuète',        emoji:'🥜', price:5, priceNormal:6,  desc:'Gourmandise croquante au design naturel bluffant' },
+  { id:'passion',   name:'Passion',          emoji:'🌺', price:5, priceNormal:6,  desc:'L\'intensité du fruit de la passion sublimée en art pâtissier' },
+  { id:'vanille',   name:'Gousse de Vanille',emoji:'🌿', price:7, priceNormal:8,  desc:'La reine des saveurs, un chef-d\'œuvre trompe-l\'œil floral' },
 ];
 
 const boxes = [
-  {qty:5,price:5},{qty:10,price:10},{qty:15,price:15},{qty:20,price:20},{qty:30,price:30}
+  {qty:5,price:5,priceNormal:6},{qty:10,price:10,priceNormal:12},{qty:15,price:15,priceNormal:17},{qty:20,price:20,priceNormal:22},{qty:30,price:30,priceNormal:30}
 ];
+
+const dattesGouts = ['Raffaelo','Spéculos','Noisette','Pralinée','Caramel beurre salé'];
+const dattesChoix = {}; // { Raffaelo: 2, ... }
+dattesGouts.forEach(g => dattesChoix[g] = 0);
+
+const dattesEmoji = {
+  'Raffaelo': '🥥', 'Spéculos': '🍪', 'Noisette': '🌰',
+  'Pralinée': '🍫', 'Caramel beurre salé': '🍮'
+};
 
 const franuiOpts = [
   {id:'franui-1',label:'1 pot 200g',price:5},
@@ -1307,7 +1365,14 @@ function updateRecap() {
 
   if (selectedBox) {
     total += selectedBox.price;
-    items.push({ name:`🌴 Dattes Fourrées ×${selectedBox.qty}`, price:selectedBox.price });
+    const dattesLines = dattesGouts
+      .filter(g => dattesChoix[g] > 0)
+      .map(g => `• ${g} ×${dattesChoix[g]}`)
+      .join('<br>');
+    const dattesDetail = dattesLines
+      ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${dattesLines}</span>`
+      : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos goûts ci-dessus</span>`;
+    items.push({ name:`🌴 Dattes Fourrées ×${selectedBox.qty}${dattesDetail}`, price:selectedBox.price });
   }
 
   if (selectedFranui) {
@@ -1380,7 +1445,10 @@ patisseries.forEach(p => {
     <span class="card-emoji">${emojiHtml}</span>
     <div class="card-name">${p.name}</div>
     <div class="card-desc">${p.desc}</div>
-    <div class="price-tag">${p.price}€ / pièce</div>
+    <div class="price-tag">
+      ${p.priceNormal ? `<span class="old-price">${p.priceNormal}€</span>` : ''}
+      <span class="new-price">${p.price}€</span><span class="per-piece"> / pièce</span>
+    </div>
     <div class="card-qty">
       <button type="button" class="qty-btn" onclick="changeQty('${p.id}', -1, event)">−</button>
       <div class="qty-num" id="qn-${p.id}">0</div>
@@ -1543,17 +1611,88 @@ boxes.forEach(b => {
   el.className = 'box-option';
   el.innerHTML = `
     <span class="box-qty-lbl">×${b.qty}</span>
+    ${b.priceNormal && b.priceNormal !== b.price ? `<span style="text-decoration:line-through;opacity:.35;font-size:.75rem;">${b.priceNormal}€</span> ` : ''}
     <span class="box-price-lbl">${b.price}€</span>
     <span class="box-sub">dattes</span>`;
   el.onclick = () => {
     document.querySelectorAll('.box-option').forEach(x=>x.classList.remove('selected'));
     el.classList.add('selected');
     selectedBox = b;
+    // Reset goûts dattes
+    dattesGouts.forEach(g => dattesChoix[g] = 0);
+    renderDattesSelector();
     updateRecap();
     showToast(`Box ×${b.qty} sélectionnée ✦`);
   };
   boxGrid.appendChild(el);
 });
+
+function renderDattesSelector() {
+  const selector = document.getElementById('dattesSelector');
+  const grid = document.getElementById('dattesGrid');
+  const hint = document.getElementById('dattesHint');
+  const valid = document.getElementById('dattesValid');
+
+  if (!selectedBox) { selector.style.display = 'none'; return; }
+
+  selector.style.display = 'block';
+  const needed = selectedBox.qty;
+  const choisi = Object.values(dattesChoix).reduce((a,v)=>a+v,0);
+  hint.textContent = `Choisissez vos ${needed} dattes`;
+
+  grid.innerHTML = '';
+  dattesGouts.forEach(g => {
+    const qty = dattesChoix[g];
+    const div = document.createElement('div');
+    div.style.cssText = `
+      display:flex;flex-direction:column;align-items:center;gap:6px;
+      padding:12px 16px; border:1px solid rgba(201,168,76,${qty>0?'.6':'.2'});
+      background:rgba(201,168,76,${qty>0?'.12':'.04'});
+      cursor:pointer; min-width:100px; transition:all .2s;`;
+    div.innerHTML = `
+      <span style="font-size:1.5rem;">${dattesEmoji[g]}</span>
+      <span style="font-size:.8rem;letter-spacing:.05em;">${g}</span>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+        <button type="button" onclick="changeDatte('${g}',-1,event)" style="
+          background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);
+          color:var(--gold);width:24px;height:24px;cursor:pointer;font-size:1rem;
+          display:flex;align-items:center;justify-content:center;">−</button>
+        <span style="font-size:1rem;font-weight:700;min-width:16px;text-align:center;">${qty}</span>
+        <button type="button" onclick="changeDatte('${g}',1,event)" style="
+          background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);
+          color:var(--gold);width:24px;height:24px;cursor:pointer;font-size:1rem;
+          display:flex;align-items:center;justify-content:center;">+</button>
+      </div>`;
+    grid.appendChild(div);
+  });
+
+  if (choisi === needed) {
+    valid.textContent = '✦ Parfait ! Votre sélection est complète.';
+    valid.style.color = '#6dbe8a';
+  } else if (choisi > needed) {
+    valid.textContent = `Vous avez sélectionné ${choisi - needed} dattes en trop.`;
+    valid.style.color = '#e06070';
+  } else {
+    valid.textContent = `Il reste ${needed - choisi} dattes à choisir.`;
+    valid.style.color = 'rgba(253,246,227,.5)';
+  }
+}
+
+function changeDatte(gout, d, event) {
+  event.stopPropagation();
+  event.preventDefault();
+  if (!selectedBox) return;
+  const needed = selectedBox.qty;
+  const total = Object.values(dattesChoix).reduce((a,v)=>a+v,0);
+  if (d > 0 && total >= needed) {
+    showToast('Vous avez déjà atteint le nombre requis !');
+    return;
+  }
+  dattesChoix[gout] = Math.max(0, dattesChoix[gout] + d);
+  if (d > 0) spawnSparkle(event);
+  renderDattesSelector();
+  updateRecap();
+}
 
 // ── FRANUI ──
 const franuiEl = document.getElementById('franuiOptions');
@@ -1604,6 +1743,19 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     valid.className = 'trompe-valid error';
     showToast(`⚠️ Complétez votre sélection (${choisi}/${needed})`);
     return;
+  }
+
+  // Vérifier que les goûts dattes sont complets
+  if (selectedBox) {
+    const dattesTotal = Object.values(dattesChoix).reduce((a,v)=>a+v,0);
+    if (dattesTotal < selectedBox.qty) {
+      document.getElementById('dattesSelector').scrollIntoView({ behavior:'smooth', block:'center' });
+      const valid = document.getElementById('dattesValid');
+      valid.textContent = `⚠️ Veuillez compléter vos goûts — il reste ${selectedBox.qty - dattesTotal} dattes à choisir.`;
+      valid.style.color = '#e06070';
+      showToast(`⚠️ Complétez vos goûts de dattes (${dattesTotal}/${selectedBox.qty})`);
+      return;
+    }
   }
 
   // Vérifier que la ville est sélectionnée
@@ -1744,6 +1896,8 @@ function resetSite() {
 
   // Remettre dattes et franui à "aucun"
   selectedBox = null;
+  dattesGouts.forEach(g => dattesChoix[g] = 0);
+  renderDattesSelector();
   document.querySelectorAll('.box-option').forEach(x => x.classList.remove('selected'));
   document.querySelector('.box-option')?.classList.add('selected');
 
