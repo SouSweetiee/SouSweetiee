@@ -1448,8 +1448,24 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   // Build summary
   let lines = [];
   patisseries.forEach(p => { if (quantities[p.id]>0) lines.push(`${p.name} ×${quantities[p.id]}`); });
+
+  // Coffrets avec détail des parfums
+  Object.entries(coffretQtys).forEach(([id, qty]) => {
+    if (qty > 0) {
+      const c = coffrets[id];
+      const parfums = patisseries
+        .filter(p => trompeChoix[p.id] > 0)
+        .map(p => `${p.name} ×${trompeChoix[p.id]}`)
+        .join(', ');
+      lines.push(`${c.name} ×${qty}${parfums ? ` (${parfums})` : ''}`);
+    }
+  });
+
   if (selectedBox)    lines.push(`Dattes Fourrées ×${selectedBox.qty}`);
   if (selectedFranui) lines.push(`Franui ${selectedFranui.label}`);
+
+  // Forcer le 0 initial du téléphone
+  const telFormate = tel.startsWith('0') ? tel : '0' + tel;
 
   const total = patisseries.reduce((a,p)=>a+quantities[p.id]*p.price,0)
     + Object.entries(coffretQtys).reduce((a,[id,qty])=>a+qty*coffrets[id].price,0)
@@ -1464,7 +1480,7 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       nom: nom,
-      tel: tel,
+      tel: telFormate,
       ville: ville,
       commande: lines.join(' | '),
       total: total
