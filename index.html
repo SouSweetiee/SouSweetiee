@@ -4,24 +4,7 @@
 <meta charset="UTF-8">
 <meta name="format-detection" content="telephone=no">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SouSweetie</title>
-
-<meta name="description" content="SouSweetie — Pâtisseries trompe-l'œil artisanales à Narbonne & Béziers. Commandez vos desserts uniques pour l'Aïd ou toute occasion.">
-
-<!-- Open Graph -->
-<meta property="og:title" content="SouSweetie">
-<meta property="og:description" content="Pâtisseries trompe-l'œil artisanales · Narbonne & Béziers">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://sousweetiee.github.io/SouSweetiee/">
-<meta property="og:image" content="https://raw.githubusercontent.com/SouSweetiee/SouSweetiee/main/framboise.png">
-
-<!-- Twitter / WhatsApp -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SouSweetie">
-<meta name="twitter:description" content="Pâtisseries trompe-l'œil artisanales · Narbonne & Béziers">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/SouSweetiee/SouSweetiee/main/framboise.png">
-
+<title>SouSweetie — Passer Commande</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -967,27 +950,8 @@ footer span { color:var(--gold); opacity:.45; }
 
     </div>
 
-    <!-- SÉLECTEUR TROMPE-L'ŒIL COFFRET -->
-    <div class="trompe-selector" id="trompeSelector" style="display:none;">
-      <div class="trompe-selector-title">
-        <span>🍋</span> Choisissez vos trompe-l'œil
-        <span class="trompe-counter" id="trompeCounter"></span>
-      </div>
-      <p class="trompe-hint" id="trompeHint"></p>
-      <div class="trompe-grid" id="trompeGrid"></div>
-      <p class="trompe-valid" id="trompeValid"></p>
-    </div>
-
-    <!-- SÉLECTEUR DATTES COFFRET -->
-    <div class="trompe-selector" id="coffretDattesSelector" style="display:none;">
-      <div class="trompe-selector-title">
-        <span>🌴</span> Choisissez vos dattes fourrées
-        <span class="trompe-counter" id="coffretDattesCounter"></span>
-      </div>
-      <p class="trompe-hint" id="coffretDattesHint"></p>
-      <div class="trompe-grid" id="coffretDattesGrid"></div>
-      <p class="trompe-valid" id="coffretDattesValid"></p>
-    </div>
+    <!-- SÉLECTEURS PAR COFFRET (générés dynamiquement) -->
+    <div id="coffretSelectorsContainer"></div>
 
     <!-- SURPRISE AÏD -->
     <div class="surprise-aid reveal">
@@ -1340,7 +1304,7 @@ const boxes = [
 ];
 
 const dattesGouts = ['Raffaelo','Spéculos','Noisette','Pralinée','Caramel beurre salé'];
-const dattesChoix = {};
+const dattesChoix = {}; // { Raffaelo: 2, ... }
 dattesGouts.forEach(g => dattesChoix[g] = 0);
 
 const dattesEmoji = {
@@ -1355,7 +1319,7 @@ const franuiOpts = [
 ];
 
 // ── STATE ──
-const quantities = {};
+const quantities = {}; // patisseries
 let selectedBox    = null;
 let selectedFranui = null;
 
@@ -1376,33 +1340,34 @@ function updateRecap() {
     }
   });
 
-  Object.entries(coffretQtys).forEach(([id, qty]) => {
-    if (qty > 0) {
-      const c = coffrets[id];
-      const sub = c.price * qty;
-      total += sub;
+  // Coffrets Aïd — un par un
+  Object.keys(coffrets).forEach(type => {
+    const qty = coffretQtys[type];
+    if (qty === 0) return;
+    const c = coffrets[type];
+    total += c.price * qty;
 
-      const trompeLines = patisseries
-        .filter(p => trompeChoix[p.id] > 0)
-        .map(p => `• ${p.name} ×${trompeChoix[p.id]}`)
-        .join('<br>');
+    for (let i = 0; i < qty; i++) {
+      const sel = coffretSelections[type] && coffretSelections[type][i];
+      const label = qty > 1 ? `${c.emoji} ${c.name} n°${i+1}` : `${c.emoji} ${c.name}`;
+      const prix = i === 0 ? c.price * qty : 0;
 
-      let detail = trompeLines
-        ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${trompeLines}</span>`
-        : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos parfums ci-dessus</span>`;
-
-      if (id === 'premium' || id === 'famille') {
-        const datteLines = dattesGouts
-          .filter(g => coffretDattesChoix[g] > 0)
-          .map(g => `• ${g} ×${coffretDattesChoix[g]}`)
-          .join('<br>');
-
-        detail += datteLines
-          ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${datteLines}</span>`
-          : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos dattes ci-dessus</span>`;
+      let detail = '';
+      if (sel) {
+        const trompeLines = patisseries.filter(p => sel.trompes[p.id] > 0)
+          .map(p => `• ${p.name} ×${sel.trompes[p.id]}`).join('<br>');
+        detail += trompeLines
+          ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${trompeLines}</span>`
+          : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos parfums</span>`;
+        if (c.dattes > 0) {
+          const datteLines = dattesGouts.filter(g => sel.dattes[g] > 0)
+            .map(g => `• ${g} ×${sel.dattes[g]}`).join('<br>');
+          detail += datteLines
+            ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${datteLines}</span>`
+            : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos dattes</span>`;
+        }
       }
-
-      items.push({ name:`${c.emoji} ${c.name} ×${qty}${detail}`, price:sub });
+      items.push({ name:`${label}${detail}`, price: prix });
     }
   });
 
@@ -1448,6 +1413,7 @@ function spawnSparkle(e) {
   el.textContent=['✦','✨','💛'][Math.floor(Math.random()*3)];
   el.style.left=(e.clientX+Math.random()*30-15)+'px';
   el.style.top =(e.clientY+Math.random()*20-10)+'px';
+  el.style.fontSize='14px';
   document.body.appendChild(el);
   setTimeout(()=>el.remove(),1900);
 }
@@ -1499,203 +1465,197 @@ patisseries.forEach(p => {
   grid.appendChild(card);
 });
 
-// ── TROMPE-L'ŒIL SELECTOR ──
-const trompeChoix = {};
-patisseries.forEach(p => trompeChoix[p.id] = 0);
-
-const coffretDattesChoix = {};
-dattesGouts.forEach(g => coffretDattesChoix[g] = 0);
-
-const coffretDattesMax = {
-  premium: 5,
-  famille: 10
+// ── COFFRETS AÏD ──
+const coffrets = {
+  decouverte: { name: 'Coffret Aïd Découverte', emoji: '🎁', price: 17, trompes: 4, dattes: 0 },
+  premium:    { name: 'Coffret Aïd Premium',    emoji: '🎀', price: 30, trompes: 6, dattes: 5 },
+  famille:    { name: 'Coffret Famille Aïd',    emoji: '👨‍👩‍👧‍👦', price: 45, trompes: 6, dattes: 10 },
 };
+const coffretQtys = { decouverte: 0, premium: 0, famille: 0 };
 
-const coffretMaxTrompe = { decouverte: 4, premium: 6, famille: 6 };
+// Structure : coffretSelections[type][index] = { trompes: {citron:2,...}, dattes: {Raffaelo:3,...} }
+const coffretSelections = { decouverte: [], premium: [], famille: [] };
 
-function getTotalTrompeNeeded() {
-  return Object.entries(coffretQtys).reduce((a,[id,qty]) => a + qty * (coffretMaxTrompe[id]||0), 0);
+function initCoffretSelections() {
+  Object.keys(coffrets).forEach(type => {
+    const qty = coffretQtys[type];
+    const c = coffrets[type];
+    // Ajuster le tableau à la bonne taille
+    while (coffretSelections[type].length < qty) {
+      coffretSelections[type].push({
+        trompes: Object.fromEntries(patisseries.map(p => [p.id, 0])),
+        dattes:  Object.fromEntries(dattesGouts.map(g => [g, 0]))
+      });
+    }
+    coffretSelections[type].length = qty;
+  });
 }
 
-function getTotalTrompeChoisi() {
-  return Object.values(trompeChoix).reduce((a,v) => a+v, 0);
+function getTrompesNeeded(type, index) { return coffrets[type].trompes; }
+function getTrompesChoisi(type, index) { return Object.values(coffretSelections[type][index].trompes).reduce((a,v)=>a+v,0); }
+function getDattesNeeded(type, index)  { return coffrets[type].dattes; }
+function getDattesChoisi(type, index)  { return Object.values(coffretSelections[type][index].dattes).reduce((a,v)=>a+v,0); }
+
+function renderAllCoffretSelectors() {
+  initCoffretSelections();
+  const container = document.getElementById('coffretSelectorsContainer');
+  container.innerHTML = '';
+
+  Object.keys(coffrets).forEach(type => {
+    const qty = coffretQtys[type];
+    if (qty === 0) return;
+    const c = coffrets[type];
+
+    for (let i = 0; i < qty; i++) {
+      const sel = coffretSelections[type][i];
+      const label = qty > 1 ? `${c.emoji} ${c.name} n°${i+1}` : `${c.emoji} ${c.name}`;
+
+      const block = document.createElement('div');
+      block.className = 'trompe-selector';
+      block.style.marginBottom = '16px';
+
+      // ── Trompe-l'œil ──
+      const tNeeded = c.trompes;
+      const tChoisi = getTrompesChoisi(type, i);
+      let trompeHTML = `
+        <div class="trompe-selector-title">
+          <span>🍋</span> ${label} — Trompe-l'œil
+          <span class="trompe-counter" id="tc-t-${type}-${i}">${tChoisi}/${tNeeded}</span>
+        </div>
+        <p class="trompe-hint">Choisissez exactement ${tNeeded} trompe-l'œil${type==='decouverte'?' (vanille non disponible)':''}</p>
+        <div class="trompe-grid" id="tg-${type}-${i}"></div>
+        <p class="trompe-valid" id="tv-${type}-${i}"></p>`;
+
+      // ── Dattes (si applicable) ──
+      if (c.dattes > 0) {
+        const dNeeded = c.dattes;
+        const dChoisi = getDattesChoisi(type, i);
+        trompeHTML += `
+        <div style="margin-top:20px; padding-top:18px; border-top:1px solid rgba(201,168,76,.15);">
+          <div class="trompe-selector-title">
+            <span>🌴</span> ${label} — Dattes fourrées
+            <span class="trompe-counter" id="tc-d-${type}-${i}">${dChoisi}/${dNeeded}</span>
+          </div>
+          <p class="trompe-hint">Choisissez exactement ${dNeeded} dattes fourrées</p>
+          <div class="trompe-grid" id="dg-${type}-${i}"></div>
+          <p class="trompe-valid" id="dv-${type}-${i}"></p>
+        </div>`;
+      }
+
+      block.innerHTML = trompeHTML;
+      container.appendChild(block);
+
+      // Render trompe items
+      renderTrompeGrid(type, i);
+      if (c.dattes > 0) renderDatteGrid(type, i);
+    }
+  });
+
+  updateRecap();
 }
 
-function getTotalCoffretDattesNeeded() {
-  return (coffretQtys.premium * coffretDattesMax.premium) + (coffretQtys.famille * coffretDattesMax.famille);
-}
-
-function getTotalCoffretDattesChoisi() {
-  return Object.values(coffretDattesChoix).reduce((a, v) => a + v, 0);
-}
-
-function renderTrompeSelector() {
-  const needed = getTotalTrompeNeeded();
-  const selector = document.getElementById('trompeSelector');
-  const grid = document.getElementById('trompeGrid');
-  const hint = document.getElementById('trompeHint');
-  const counter = document.getElementById('trompeCounter');
-  const valid = document.getElementById('trompeValid');
-
-  if (needed === 0) {
-    selector.style.display = 'none';
-    return;
-  }
-
-  selector.style.display = 'block';
-  const choisi = getTotalTrompeChoisi();
-  hint.textContent = `Sélectionnez exactement ${needed} trompe-l'œil pour vos coffrets`;
-  counter.textContent = `${choisi} / ${needed} choisi${choisi>1?'s':''}`;
-
+function renderTrompeGrid(type, i) {
+  const grid = document.getElementById(`tg-${type}-${i}`);
+  if (!grid) return;
+  const sel = coffretSelections[type][i];
+  const tNeeded = coffrets[type].trompes;
+  const tChoisi = getTrompesChoisi(type, i);
   grid.innerHTML = '';
+
   patisseries.forEach(p => {
-    const qty = trompeChoix[p.id];
+    const qty = sel.trompes[p.id];
     const div = document.createElement('div');
     div.className = 'trompe-item' + (qty > 0 ? ' selected' : '');
     div.innerHTML = `
       <div class="trompe-item-qty">${qty}</div>
-      <span class="trompe-item-emoji">${p.id === 'framboise' ? RASP_HTML_SM : p.id === 'vanille' ? VAN_HTML_SM : p.id === 'passion' ? PAS_HTML_SM : p.emoji}</span>
+      <span class="trompe-item-emoji">${p.id==='framboise'?RASP_HTML_SM:p.id==='vanille'?VAN_HTML_SM:p.id==='passion'?PAS_HTML_SM:p.emoji}</span>
       <span class="trompe-item-name">${p.name}</span>
-      <span class="trompe-item-price">${p.price}€</span>
       <div class="trompe-item-btns">
-        <button type="button" onclick="changeTrompe('${p.id}',-1,event)">−</button>
+        <button type="button" onclick="changeTrompeItem('${type}',${i},'${p.id}',-1,event)">−</button>
         <span>${qty}</span>
-        <button type="button" onclick="changeTrompe('${p.id}',1,event)">+</button>
+        <button type="button" onclick="changeTrompeItem('${type}',${i},'${p.id}',1,event)">+</button>
       </div>`;
     grid.appendChild(div);
   });
 
-  if (choisi === needed) {
-    valid.textContent = '✦ Parfait ! Votre sélection est complète.';
-    valid.className = 'trompe-valid ok';
-  } else if (choisi > needed) {
-    valid.textContent = `Vous avez sélectionné ${choisi - needed} trompe-l'œil en trop.`;
-    valid.className = 'trompe-valid';
-  } else {
-    valid.textContent = `Il reste ${needed - choisi} trompe-l'œil à choisir.`;
-    valid.className = 'trompe-valid';
+  const valid = document.getElementById(`tv-${type}-${i}`);
+  const counter = document.getElementById(`tc-t-${type}-${i}`);
+  if (counter) counter.textContent = `${tChoisi}/${tNeeded}`;
+  if (valid) {
+    if (tChoisi === tNeeded) { valid.textContent = '✦ Parfait !'; valid.className = 'trompe-valid ok'; }
+    else { valid.textContent = `Il reste ${tNeeded - tChoisi} trompe-l'œil à choisir.`; valid.className = 'trompe-valid'; }
   }
 }
 
-function renderCoffretDattesSelector() {
-  const needed = getTotalCoffretDattesNeeded();
-  const selector = document.getElementById('coffretDattesSelector');
-  const grid = document.getElementById('coffretDattesGrid');
-  const hint = document.getElementById('coffretDattesHint');
-  const counter = document.getElementById('coffretDattesCounter');
-  const valid = document.getElementById('coffretDattesValid');
-
-  if (needed === 0) {
-    selector.style.display = 'none';
-    return;
-  }
-
-  selector.style.display = 'block';
-  const choisi = getTotalCoffretDattesChoisi();
-
-  hint.textContent = `Sélectionnez exactement ${needed} dattes fourrées pour vos coffrets Premium / Famille`;
-  counter.textContent = `${choisi} / ${needed} choisie${choisi > 1 ? 's' : ''}`;
-
+function renderDatteGrid(type, i) {
+  const grid = document.getElementById(`dg-${type}-${i}`);
+  if (!grid) return;
+  const sel = coffretSelections[type][i];
+  const dNeeded = coffrets[type].dattes;
+  const dChoisi = getDattesChoisi(type, i);
   grid.innerHTML = '';
+
   dattesGouts.forEach(g => {
-    const qty = coffretDattesChoix[g];
+    const qty = sel.dattes[g];
     const div = document.createElement('div');
     div.className = 'trompe-item' + (qty > 0 ? ' selected' : '');
     div.innerHTML = `
       <div class="trompe-item-qty">${qty}</div>
       <span class="trompe-item-emoji">${dattesEmoji[g]}</span>
       <span class="trompe-item-name">${g}</span>
-      <span class="trompe-item-price">Dattes coffret</span>
       <div class="trompe-item-btns">
-        <button type="button" onclick="changeCoffretDatte('${g}',-1,event)">−</button>
+        <button type="button" onclick="changeDatteItem('${type}',${i},'${g}',-1,event)">−</button>
         <span>${qty}</span>
-        <button type="button" onclick="changeCoffretDatte('${g}',1,event)">+</button>
+        <button type="button" onclick="changeDatteItem('${type}',${i},'${g}',1,event)">+</button>
       </div>`;
     grid.appendChild(div);
   });
 
-  if (choisi === needed) {
-    valid.textContent = '✦ Parfait ! Votre sélection de dattes est complète.';
-    valid.className = 'trompe-valid ok';
-  } else if (choisi > needed) {
-    valid.textContent = `Vous avez sélectionné ${choisi - needed} dattes en trop.`;
-    valid.className = 'trompe-valid error';
-  } else {
-    valid.textContent = `Il reste ${needed - choisi} dattes à choisir.`;
-    valid.className = 'trompe-valid';
+  const valid = document.getElementById(`dv-${type}-${i}`);
+  const counter = document.getElementById(`tc-d-${type}-${i}`);
+  if (counter) counter.textContent = `${dChoisi}/${dNeeded}`;
+  if (valid) {
+    if (dChoisi === dNeeded) { valid.textContent = '✦ Parfait !'; valid.className = 'trompe-valid ok'; }
+    else { valid.textContent = `Il reste ${dNeeded - dChoisi} dattes à choisir.`; valid.className = 'trompe-valid'; }
   }
 }
 
-function changeTrompe(id, d, event) {
-  event.stopPropagation();
-  event.preventDefault();
-  const needed = getTotalTrompeNeeded();
-  const total = getTotalTrompeChoisi();
-
+function changeTrompeItem(type, i, id, d, event) {
+  event.stopPropagation(); event.preventDefault();
+  const sel = coffretSelections[type][i];
+  const tNeeded = coffrets[type].trompes;
+  const tChoisi = getTrompesChoisi(type, i);
   if (d > 0) {
-    if (id === 'vanille' && coffretQtys['decouverte'] > 0 && coffretQtys['premium'] === 0 && coffretQtys['famille'] === 0) {
-      showToast('La vanille n\'est pas disponible pour le Coffret Découverte', 4500);
-      return;
-    }
-    if (id === 'vanille' && trompeChoix['vanille'] >= 1) {
-      showToast('Maximum 1 Gousse de Vanille par commande de coffret', 4500);
-      return;
-    }
-    if (id === 'vanille' && coffretQtys['premium'] === 0 && coffretQtys['famille'] === 0) {
-      showToast('La vanille n\'est pas disponible pour le Coffret Découverte', 4500);
-      return;
-    }
-    if (total >= needed) {
-      showToast('Vous avez déjà atteint le nombre requis !');
-      return;
-    }
+    if (id === 'vanille' && type === 'decouverte') { showToast('La vanille n\'est pas disponible pour le Coffret Découverte', 4500); return; }
+    if (id === 'vanille' && sel.trompes['vanille'] >= 1) { showToast('Maximum 1 Gousse de Vanille par coffret', 4500); return; }
+    if (tChoisi >= tNeeded) { showToast('Vous avez atteint le nombre requis pour ce coffret !'); return; }
   }
-
-  trompeChoix[id] = Math.max(0, trompeChoix[id] + d);
+  sel.trompes[id] = Math.max(0, sel.trompes[id] + d);
   if (d > 0) spawnSparkle(event);
-  renderTrompeSelector();
+  renderTrompeGrid(type, i);
   updateRecap();
 }
 
-function changeCoffretDatte(gout, d, event) {
-  event.stopPropagation();
-  event.preventDefault();
-
-  const needed = getTotalCoffretDattesNeeded();
-  const total = getTotalCoffretDattesChoisi();
-
-  if (d > 0 && total >= needed) {
-    showToast('Vous avez déjà atteint le nombre requis de dattes !');
-    return;
-  }
-
-  coffretDattesChoix[gout] = Math.max(0, coffretDattesChoix[gout] + d);
-
+function changeDatteItem(type, i, gout, d, event) {
+  event.stopPropagation(); event.preventDefault();
+  const sel = coffretSelections[type][i];
+  const dNeeded = coffrets[type].dattes;
+  const dChoisi = getDattesChoisi(type, i);
+  if (d > 0 && dChoisi >= dNeeded) { showToast('Vous avez atteint le nombre requis pour ce coffret !'); return; }
+  sel.dattes[gout] = Math.max(0, sel.dattes[gout] + d);
   if (d > 0) spawnSparkle(event);
-
-  renderCoffretDattesSelector();
+  renderDatteGrid(type, i);
   updateRecap();
 }
-
-// ── COFFRETS AÏD ──
-const coffrets = {
-  decouverte: { name: 'Coffret Aïd Découverte', emoji: '🎁', price: 17 },
-  premium:    { name: 'Coffret Aïd Premium',    emoji: '🎀', price: 30 },
-  famille:    { name: 'Coffret Famille Aïd',    emoji: '👨‍👩‍👧‍👦', price: 45 },
-};
-const coffretQtys = { decouverte: 0, premium: 0, famille: 0 };
 
 function changeCoffretQty(id, d, event) {
-  event.stopPropagation();
-  event.preventDefault();
+  event.stopPropagation(); event.preventDefault();
   coffretQtys[id] = Math.max(0, Math.min(20, coffretQtys[id] + d));
   const el = document.getElementById('qn-' + id);
   el.textContent = coffretQtys[id];
   el.classList.toggle('active', coffretQtys[id] > 0);
   if (d > 0) spawnSparkle(event);
-  updateRecap();
-  renderTrompeSelector();
-  renderCoffretDattesSelector();
+  renderAllCoffretSelectors();
   showToast(d > 0 ? `${coffrets[id].name} ajouté ✦` : `${coffrets[id].name} retiré`);
 }
 
@@ -1742,6 +1702,7 @@ boxes.forEach(b => {
     document.querySelectorAll('.box-option').forEach(x=>x.classList.remove('selected'));
     el.classList.add('selected');
     selectedBox = b;
+    // Reset goûts dattes
     dattesGouts.forEach(g => dattesChoix[g] = 0);
     renderDattesSelector();
     updateRecap();
@@ -1820,6 +1781,7 @@ function changeDatte(gout, d, event) {
 // ── FRANUI ──
 const franuiEl = document.getElementById('franuiOptions');
 
+// Option "Pas de Franui"
 const noFranuiEl = document.createElement('div');
 noFranuiEl.className = 'franui-opt selected';
 noFranuiEl.innerHTML = `<span class="franui-opt-label">✕ Pas de Franui</span><span class="franui-opt-price">—</span>`;
@@ -1855,40 +1817,48 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const fd = new FormData(this);
 
-  const needed = getTotalTrompeNeeded();
-  const choisi = getTotalTrompeChoisi();
-  if (needed > 0 && choisi < needed) {
-    document.getElementById('trompeSelector').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const valid = document.getElementById('trompeValid');
-    valid.textContent = `⚠️ Veuillez compléter votre sélection — il reste ${needed - choisi} trompe-l'œil à choisir.`;
-    valid.className = 'trompe-valid error';
-    showToast(`⚠️ Complétez votre sélection (${choisi}/${needed})`);
-    return;
+  // Vérifier chaque coffret individuellement
+  for (const type of Object.keys(coffrets)) {
+    const qty = coffretQtys[type];
+    if (qty === 0) continue;
+    const c = coffrets[type];
+    for (let i = 0; i < qty; i++) {
+      const sel = coffretSelections[type][i];
+      const label = qty > 1 ? `${c.name} n°${i+1}` : c.name;
+      const tChoisi = getTrompesChoisi(type, i);
+      if (tChoisi < c.trompes) {
+        document.getElementById(`tv-${type}-${i}`).textContent = `⚠️ Il reste ${c.trompes - tChoisi} trompe-l'œil à choisir.`;
+        document.getElementById(`tv-${type}-${i}`).className = 'trompe-valid error';
+        document.getElementById(`tg-${type}-${i}`).scrollIntoView({ behavior:'smooth', block:'center' });
+        showToast(`⚠️ ${label} — complétez les trompe-l'œil`);
+        return;
+      }
+      if (c.dattes > 0) {
+        const dChoisi = getDattesChoisi(type, i);
+        if (dChoisi < c.dattes) {
+          document.getElementById(`dv-${type}-${i}`).textContent = `⚠️ Il reste ${c.dattes - dChoisi} dattes à choisir.`;
+          document.getElementById(`dv-${type}-${i}`).className = 'trompe-valid error';
+          document.getElementById(`dg-${type}-${i}`).scrollIntoView({ behavior:'smooth', block:'center' });
+          showToast(`⚠️ ${label} — complétez les dattes`);
+          return;
+        }
+      }
+    }
   }
 
-  const neededCoffretDattes = getTotalCoffretDattesNeeded();
-  const choisiCoffretDattes = getTotalCoffretDattesChoisi();
-  if (neededCoffretDattes > 0 && choisiCoffretDattes < neededCoffretDattes) {
-    document.getElementById('coffretDattesSelector').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const valid = document.getElementById('coffretDattesValid');
-    valid.textContent = `⚠️ Veuillez compléter votre sélection — il reste ${neededCoffretDattes - choisiCoffretDattes} dattes à choisir.`;
-    valid.className = 'trompe-valid error';
-    showToast(`⚠️ Complétez vos dattes coffret (${choisiCoffretDattes}/${neededCoffretDattes})`);
-    return;
-  }
-
+  // Vérifier que les goûts dattes box sont complets
   if (selectedBox) {
     const dattesTotal = Object.values(dattesChoix).reduce((a,v)=>a+v,0);
     if (dattesTotal < selectedBox.qty) {
       document.getElementById('dattesSelector').scrollIntoView({ behavior:'smooth', block:'center' });
-      const valid = document.getElementById('dattesValid');
-      valid.textContent = `⚠️ Veuillez compléter vos goûts — il reste ${selectedBox.qty - dattesTotal} dattes à choisir.`;
-      valid.style.color = '#e06070';
+      document.getElementById('dattesValid').textContent = `⚠️ Il reste ${selectedBox.qty - dattesTotal} dattes à choisir.`;
+      document.getElementById('dattesValid').style.color = '#e06070';
       showToast(`⚠️ Complétez vos goûts de dattes (${dattesTotal}/${selectedBox.qty})`);
       return;
     }
   }
 
+  // Vérifier que la ville est sélectionnée
   const ville = fd.get('ville');
   if (!ville) {
     document.getElementById('villeRadioRow').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1907,11 +1877,8 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   const message = fd.get('message') || '';
 
   let telValide = true;
-  if (indicatif === '+33') {
-    telValide = /^0[67][0-9]{8}$/.test(tel);
-  } else {
-    telValide = telRaw.length >= 6;
-  }
+  if (indicatif === '+33') { telValide = /^0[67][0-9]{8}$/.test(tel); }
+  else { telValide = telRaw.length >= 6; }
 
   if (!telValide) {
     document.getElementById('telInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1925,27 +1892,26 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 
   const telComplet = indicatif + ' ' + (indicatif === '+33' ? tel : telRaw);
 
+  // Build summary — un coffret individuel par ligne
   let lines = [];
   patisseries.forEach(p => { if (quantities[p.id]>0) lines.push(`${p.name} ×${quantities[p.id]}`); });
 
-  Object.entries(coffretQtys).forEach(([id, qty]) => {
-    if (qty > 0) {
-      const c = coffrets[id];
-      const parfums = patisseries
-        .filter(p => trompeChoix[p.id] > 0)
-        .map(p => `${p.name} ×${trompeChoix[p.id]}`)
-        .join(', ');
-
-      if (id === 'premium' || id === 'famille') {
-        const dattesCoffret = dattesGouts
-          .filter(g => coffretDattesChoix[g] > 0)
-          .map(g => `${g} ×${coffretDattesChoix[g]}`)
-          .join(', ');
-
-        lines.push(`${c.name} ×${qty}${parfums ? ` → Trompe-l'œil : ${parfums}` : ''}${dattesCoffret ? ` | Dattes : ${dattesCoffret}` : ''}`);
-      } else {
-        lines.push(`${c.name} ×${qty}${parfums ? ` → Trompe-l'œil : ${parfums}` : ''}`);
+  Object.keys(coffrets).forEach(type => {
+    const qty = coffretQtys[type];
+    if (qty === 0) return;
+    const c = coffrets[type];
+    for (let i = 0; i < qty; i++) {
+      const sel = coffretSelections[type][i];
+      const label = qty > 1 ? `${c.name} n°${i+1}` : c.name;
+      const parfums = patisseries.filter(p => sel.trompes[p.id] > 0)
+        .map(p => `${p.name} ×${sel.trompes[p.id]}`).join(', ');
+      let line = `${label} → Trompe-l'œil : ${parfums || '—'}`;
+      if (c.dattes > 0) {
+        const dattesCoffret = dattesGouts.filter(g => sel.dattes[g] > 0)
+          .map(g => `${g} ×${sel.dattes[g]}`).join(', ');
+        line += ` | Dattes : ${dattesCoffret || '—'}`;
       }
+      lines.push(line);
     }
   });
 
@@ -1956,10 +1922,11 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   if (selectedFranui) lines.push(`Franui ${selectedFranui.label}`);
 
   const total = patisseries.reduce((a,p)=>a+quantities[p.id]*p.price,0)
-    + Object.entries(coffretQtys).reduce((a,[id,qty])=>a+qty*coffrets[id].price,0)
+    + Object.keys(coffrets).reduce((a,type)=>a+coffretQtys[type]*coffrets[type].price,0)
     + (selectedBox?selectedBox.price:0)
     + (selectedFranui?selectedFranui.price:0);
 
+  // Envoi vers Google Sheets
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLmIwq2WewReiOTsH_kH9ldPQfJ3beHEtnqBNXfC95xdNmArN72mPjiTwcuSQffYFz1A/exec';
   fetch(SCRIPT_URL, {
     method: 'POST',
@@ -1975,6 +1942,7 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     })
   }).catch(err => console.error('Erreur envoi commande:', err));
 
+  // Confetti
   for (let i=0;i<18;i++) {
     setTimeout(()=>{
       const el = document.createElement('div');
@@ -2004,30 +1972,31 @@ if (cmdSection) floatObs.observe(cmdSection);
 
 // ── RESET SITE ──
 function resetSite() {
+  // Cacher le success screen
   document.getElementById('successScreen').style.display = 'none';
 
+  // Remettre le formulaire
   const form = document.getElementById('orderForm');
   form.reset();
   form.style.display = '';
 
+  // Remettre les quantités pâtisseries à 0
   patisseries.forEach(p => {
     quantities[p.id] = 0;
     const el = document.getElementById('qn-' + p.id);
     if (el) { el.textContent = '0'; el.classList.remove('active'); }
   });
 
+  // Remettre les coffrets à 0
   Object.keys(coffretQtys).forEach(id => {
     coffretQtys[id] = 0;
     const el = document.getElementById('qn-' + id);
     if (el) { el.textContent = '0'; el.classList.remove('active'); }
   });
+  Object.keys(coffretSelections).forEach(type => coffretSelections[type] = []);
+  renderAllCoffretSelectors();
 
-  patisseries.forEach(p => trompeChoix[p.id] = 0);
-  renderTrompeSelector();
-
-  dattesGouts.forEach(g => coffretDattesChoix[g] = 0);
-  renderCoffretDattesSelector();
-
+  // Remettre dattes et franui à "aucun"
   selectedBox = null;
   dattesGouts.forEach(g => dattesChoix[g] = 0);
   renderDattesSelector();
@@ -2038,12 +2007,16 @@ function resetSite() {
   document.querySelectorAll('.franui-opt').forEach(x => x.classList.remove('selected'));
   document.querySelector('.franui-opt')?.classList.add('selected');
 
+  // Remettre les erreurs
   document.getElementById('villeError').style.display = 'none';
   document.getElementById('telError').style.display = 'none';
   document.getElementById('telInput').style.borderColor = '';
   document.getElementById('indicatif').value = '+33';
 
+  // Mettre à jour le récap
   updateRecap();
+
+  // Remonter en haut
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
