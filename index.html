@@ -509,208 +509,6 @@ footer span { color:var(--gold); opacity:.45; }
 .reveal { opacity:0; transform:translateY(28px); transition:opacity .7s ease,transform .7s ease; }
 .reveal.visible { opacity:1; transform:none; }
 
-/* ── SECTION AÏD ── */
-.aid-section {
-  position: relative; z-index: 1;
-  background:
-    radial-gradient(ellipse at 20% 30%, rgba(180,30,60,.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 70%, rgba(201,168,76,.15) 0%, transparent 55%),
-    linear-gradient(160deg, #1a0510 0%, #0e0804 40%, #12080e 100%);
-  border-top: 1px solid rgba(201,168,76,.2);
-  border-bottom: 1px solid rgba(201,168,76,.2);
-  overflow: hidden; padding: 80px 0;
-}
-.aid-section::before {
-  content:''; position:absolute; inset:0;
-  background-image:
-    radial-gradient(circle at 15% 50%, rgba(220,50,80,.06) 0%, transparent 40%),
-    radial-gradient(circle at 85% 20%, rgba(201,168,76,.08) 0%, transparent 40%);
-  pointer-events:none;
-}
-.aid-stars { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
-.aid-star {
-  position:absolute; color:var(--gold-light);
-  animation:twinkle ease-in-out infinite; font-size:10px; opacity:0;
-}
-@keyframes twinkle { 0%,100%{opacity:0;transform:scale(.5);}50%{opacity:.7;transform:scale(1);} }
-.aid-inner { max-width:1100px; margin:0 auto; padding:0 40px; position:relative; z-index:1; }
-.aid-badge { text-align:center; margin-bottom:14px; }
-.aid-badge-inner {
-  display:inline-block;
-  background:linear-gradient(135deg,#8b1a2a,#c0253a,#8b1a2a);
-  border:2px solid var(--gold);
-  padding:10px 40px;
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.4rem,4vw,2.2rem); font-weight:900;
-  color:var(--gold-light); letter-spacing:.08em;
-  box-shadow:0 0 40px rgba(192,37,58,.4),0 0 80px rgba(192,37,58,.15);
-  position:relative;
-}
-.aid-badge-inner::before,.aid-badge-inner::after { content:'☽'; position:absolute; top:50%; transform:translateY(-50%); font-size:1.2rem; color:var(--gold); opacity:.8; }
-.aid-badge-inner::before{left:12px;} .aid-badge-inner::after{right:12px;transform:translateY(-50%) scaleX(-1);}
-.aid-subtitle {
-  text-align:center; font-family:'IM Fell English',serif; font-style:italic;
-  font-size:clamp(.95rem,2vw,1.2rem); color:var(--gold-light); opacity:.8; margin-bottom:6px;
-}
-.aid-subtitle::before,.aid-subtitle::after{content:' ✦ ';opacity:.5;}
-.aid-loc { text-align:center; font-size:.72rem; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); opacity:.55; margin-bottom:52px; }
-.coffrets-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:24px; margin-bottom:28px; }
-.coffret-card {
-  background:linear-gradient(145deg,rgba(60,10,20,.9),rgba(20,8,12,.97));
-  border:1px solid rgba(201,168,76,.25); border-radius:3px; padding:32px 28px;
-  position:relative; overflow:visible;
-  transition:transform .35s cubic-bezier(.22,.68,0,1.2),border-color .3s,box-shadow .3s;
-}
-.coffret-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:2px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);
-  opacity:0; transition:opacity .3s;
-}
-.coffret-card:hover { transform:translateY(-8px) scale(1.02); border-color:rgba(201,168,76,.6); box-shadow:0 20px 60px rgba(192,37,58,.2); }
-.coffret-card:hover::before { opacity:1; }
-.coffret-badge {
-  position:absolute; top:-12px; left:20px;
-  background:linear-gradient(135deg,#c0253a,#8b1a2a);
-  border:1px solid var(--gold); color:var(--gold-light);
-  font-family:'Playfair Display',serif; font-size:.62rem; font-weight:700;
-  letter-spacing:.15em; text-transform:uppercase; padding:4px 14px;
-  animation:pulseBadge 2s ease-in-out infinite;
-}
-@keyframes pulseBadge{0%,100%{box-shadow:0 4px 16px rgba(192,37,58,.4);}50%{box-shadow:0 4px 28px rgba(192,37,58,.8);}}
-.coffret-emoji { font-size:2.8rem; margin-bottom:14px; display:block; }
-.coffret-name { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:900; color:var(--gold-light); margin-bottom:5px; text-transform:uppercase; letter-spacing:.05em; }
-.coffret-desc { font-style:italic; font-size:.9rem; color:rgba(253,246,227,.5); margin-bottom:16px; line-height:1.5; }
-.coffret-includes { list-style:none; margin-bottom:20px; display:flex; flex-direction:column; gap:5px; }
-.coffret-includes li { font-size:.88rem; color:rgba(253,246,227,.7); display:flex; align-items:center; gap:8px; }
-.coffret-includes li::before { content:'✦'; color:var(--gold); font-size:.6rem; }
-.coffret-pricing { display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:18px; }
-.price-old { font-family:'Playfair Display',serif; font-size:1.3rem; color:rgba(253,246,227,.3); text-decoration:line-through; }
-.price-new {
-  font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:900;
-  background:linear-gradient(135deg,#c0253a,#e06070);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-  filter:drop-shadow(0 0 12px rgba(192,37,58,.5));
-}
-.price-new.gold {
-  background:linear-gradient(135deg,#c9a84c,#f0d080);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-  filter:drop-shadow(0 0 12px rgba(201,168,76,.4));
-}
-.coffret-qty {
-  display:flex; align-items:center; justify-content:center; gap:0;
-  border:1px solid rgba(201,168,76,.3); border-radius:2px; overflow:hidden; position:relative; z-index:10;
-}
-.surprise-aid {
-  background:linear-gradient(135deg,rgba(10,50,20,.92),rgba(5,30,12,.97));
-  border:2px solid var(--gold); border-radius:3px; padding:36px 40px;
-  text-align:center; position:relative; overflow:hidden;
-  box-shadow:0 0 40px rgba(201,168,76,.15); margin-top:12px;
-}
-.surprise-aid::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,.1) 0%,transparent 60%); }
-.surprise-aid-title {
-  font-family:'Playfair Display',serif; font-size:clamp(1.3rem,3vw,1.8rem); font-weight:900;
-  background:linear-gradient(135deg,#c9a84c,#f0d080);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-  letter-spacing:.08em; text-transform:uppercase; margin-bottom:10px;
-}
-.surprise-aid-text { font-size:1.05rem; color:rgba(253,246,227,.75); line-height:1.7; margin-bottom:12px; }
-.surprise-aid-highlight { font-family:'Playfair Display',serif; font-size:clamp(1.1rem,2.5vw,1.5rem); font-weight:900; color:var(--gold-light); }
-.surprise-gift { font-size:3rem; animation:gentleFloat 3s ease-in-out infinite; display:inline-block; margin-bottom:12px; }
-.aid-limited { text-align:center; margin-top:36px; font-family:'IM Fell English',serif; font-style:italic; font-size:.95rem; color:var(--gold); opacity:.6; }
-
-/* ── TROMPE-L'ŒIL SELECTOR ── */
-.trompe-selector {
-  background: linear-gradient(145deg, rgba(20,12,4,.97), rgba(30,18,8,.95));
-  border: 1px solid rgba(201,168,76,.4);
-  border-radius: 3px;
-  padding: 32px 28px;
-  margin: 0 0 28px;
-  position: relative;
-  animation: fadeUp .4s ease;
-}
-.trompe-selector::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-@keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
-
-.trompe-selector-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.15rem; font-weight: 700;
-  color: var(--gold-light); margin-bottom: 8px;
-  display: flex; align-items: center; gap: 10px;
-}
-.trompe-counter {
-  font-size: .75rem; letter-spacing: .15em;
-  color: var(--gold); opacity: .8;
-  background: rgba(201,168,76,.1);
-  border: 1px solid rgba(201,168,76,.3);
-  padding: 3px 12px; border-radius: 20px;
-  margin-left: auto;
-}
-.trompe-hint {
-  font-style: italic; font-size: .9rem;
-  color: rgba(253,246,227,.45); margin-bottom: 20px;
-}
-.trompe-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 10px;
-}
-.trompe-item {
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(201,168,76,.18);
-  border-radius: 2px; padding: 14px 10px;
-  text-align: center; cursor: pointer;
-  transition: all .25s; position: relative;
-  user-select: none;
-}
-.trompe-item:hover { border-color: rgba(201,168,76,.5); background: rgba(201,168,76,.06); }
-.trompe-item.selected {
-  border-color: var(--gold);
-  background: rgba(201,168,76,.13);
-  box-shadow: 0 0 16px rgba(201,168,76,.15);
-}
-.trompe-item-emoji { font-size: 2rem; display: block; margin-bottom: 6px; }
-.trompe-item-name { font-size: .82rem; color: var(--cream); display: block; margin-bottom: 3px; }
-.trompe-item-price { font-size: .75rem; color: var(--gold); display: block; }
-.trompe-item-qty {
-  position: absolute; top: 6px; right: 6px;
-  background: var(--gold); color: var(--dark);
-  border-radius: 50%; width: 20px; height: 20px;
-  font-size: .7rem; font-weight: 700;
-  display: none; align-items: center; justify-content: center;
-  font-family: 'Playfair Display', serif;
-}
-.trompe-item.selected .trompe-item-qty { display: flex; }
-.trompe-item-btns {
-  display: flex; justify-content: center; gap: 0;
-  margin-top: 8px; border: 1px solid rgba(201,168,76,.25);
-  border-radius: 2px; overflow: hidden;
-}
-.trompe-item-btns button {
-  flex: 1; height: 26px; background: rgba(201,168,76,.08);
-  border: none; color: var(--gold); font-size: 1rem;
-  cursor: pointer; transition: background .2s;
-}
-.trompe-item-btns button:hover { background: rgba(201,168,76,.25); }
-.trompe-item-btns span {
-  padding: 0 10px; line-height: 26px; font-size: .9rem;
-  color: var(--cream); border-left: 1px solid rgba(201,168,76,.2);
-  border-right: 1px solid rgba(201,168,76,.2);
-  font-family: 'Playfair Display', serif; font-weight: 700;
-  min-width: 28px; text-align: center;
-}
-.trompe-valid {
-  margin-top: 14px; font-style: italic;
-  font-size: .85rem; text-align: center;
-  color: rgba(253,246,227,.4);
-  transition: color .3s;
-}
-.trompe-valid.ok { color: #6dbe8a; }
-.trompe-valid.error { color: #e06070; font-weight: 600; animation: shake .4s ease; }
-@keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
-
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
   nav{padding:12px 18px;}
@@ -811,7 +609,6 @@ footer span { color:var(--gold); opacity:.45; }
   </button>
   <ul class="nav-links" id="navLinks">
     <li><a href="#patisseries" class="nav-link-item">Pâtisseries</a></li>
-    <li><a href="#aid" class="nav-link-item">🌙 Aïd</a></li>
     <li><a href="#dates" class="nav-link-item">Dattes</a></li>
     <li><a href="#franui" class="nav-link-item">Franui</a></li>
     <li><a href="#commander" class="nav-link-item">Commander</a></li>
@@ -825,33 +622,6 @@ footer span { color:var(--gold); opacity:.45; }
     <div class="logo-main">SouSweetie</div>
     <div class="logo-sub">Pâtisseries Trompe-l'Œil</div>
     <div class="logo-tag">L'art de la gourmandise</div>
-  </div>
-
-  <!-- OFFRE SPÉCIALE -->
-  <div style="
-    margin: 24px auto 0;
-    max-width: 420px;
-    border: 1px solid rgba(201,168,76,.5);
-    background: rgba(201,168,76,.08);
-    padding: 14px 28px;
-    text-align: center;
-    position: relative;
-    animation: fadeIn .8s ease .3s both;">
-    <div style="
-      position:absolute; top:-10px; left:50%; transform:translateX(-50%);
-      background:var(--dark2); padding:0 12px;
-      font-size:.6rem; letter-spacing:.35em; text-transform:uppercase;
-      color:var(--gold); white-space:nowrap;">✦ Offre Spéciale ✦</div>
-    <div style="
-      font-family:'Playfair Display',serif;
-      font-size:1.25rem; font-weight:700;
-      background:linear-gradient(135deg,#c9a84c,#f0d080,#c9a84c);
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">
-      Du 09 au 23 Mars
-    </div>
-    <div style="font-size:.8rem; opacity:.6; margin-top:4px; letter-spacing:.1em;">
-      Prix remisés sur toute la collection
-    </div>
   </div>
 
   <div class="hero-divider"></div>
@@ -874,97 +644,6 @@ footer span { color:var(--gold); opacity:.45; }
 
 <div class="full-sep"></div>
 
-<!-- OFFRES AÏD -->
-<div class="aid-section" id="aid">
-  <div class="aid-stars" id="aidStars"></div>
-  <div class="aid-inner">
-
-    <div class="aid-badge reveal">
-      <div class="aid-badge-inner">Offre Spéciale Aïd 2026</div>
-    </div>
-    <p class="aid-subtitle reveal">Coffrets gourmands parfaits pour offrir</p>
-
-    <div class="coffrets-grid">
-
-      <!-- COFFRET DÉCOUVERTE -->
-      <div class="coffret-card reveal">
-        <div class="coffret-badge">⭐ Le plus vendu</div>
-        <span class="coffret-emoji">🎁</span>
-        <div class="coffret-name">Coffret Aïd Découverte</div>
-        <div class="coffret-desc">4 trompe-l'œil au choix</div>
-        <ul class="coffret-includes">
-          <li>Desserts faits maison</li>
-          <li>Produits frais</li>
-          <li>Préparés sur commande</li>
-        </ul>
-        <div class="coffret-pricing">
-          <span class="price-old">20€</span>
-          <span class="price-new">17€</span>
-        </div>
-        <div class="coffret-qty">
-          <button type="button" class="qty-btn" onclick="changeCoffretQty('decouverte',-1,event)">−</button>
-          <div class="qty-num" id="qn-decouverte">0</div>
-          <button type="button" class="qty-btn" onclick="changeCoffretQty('decouverte',1,event)">+</button>
-        </div>
-      </div>
-
-      <!-- COFFRET PREMIUM -->
-      <div class="coffret-card reveal">
-        <span class="coffret-emoji">🎀</span>
-        <div class="coffret-name">Coffret Aïd Premium</div>
-        <div class="coffret-desc">6 trompe-l'œil + 5 dattes fourrées</div>
-        <ul class="coffret-includes">
-          <li>Desserts faits maison</li>
-          <li>Préparés sur commande</li>
-        </ul>
-        <div class="coffret-pricing">
-          <span class="price-old">35€</span>
-          <span class="price-new">30€</span>
-        </div>
-        <div class="coffret-qty">
-          <button type="button" class="qty-btn" onclick="changeCoffretQty('premium',-1,event)">−</button>
-          <div class="qty-num" id="qn-premium">0</div>
-          <button type="button" class="qty-btn" onclick="changeCoffretQty('premium',1,event)">+</button>
-        </div>
-      </div>
-
-      <!-- COFFRET FAMILLE -->
-      <div class="coffret-card reveal">
-        <span class="coffret-emoji">👨‍👩‍👧‍👦</span>
-        <div class="coffret-name">Coffret Famille Aïd</div>
-        <div class="coffret-desc">6 trompe-l'œil + 10 dattes fourrées + 1 pot Franui</div>
-        <ul class="coffret-includes">
-          <li>Idéal pour toute la famille</li>
-          <li>Desserts faits maison</li>
-          <li>1 douceur offerte 🎁</li>
-        </ul>
-        <div class="coffret-pricing">
-          <span class="price-new gold">45€</span>
-        </div>
-        <div class="coffret-qty">
-          <button type="button" class="qty-btn" onclick="changeCoffretQty('famille',-1,event)">−</button>
-          <div class="qty-num" id="qn-famille">0</div>
-          <button type="button" class="qty-btn" onclick="changeCoffretQty('famille',1,event)">+</button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- SÉLECTEURS PAR COFFRET (générés dynamiquement) -->
-    <div id="coffretSelectorsContainer"></div>
-
-    <!-- SURPRISE AÏD -->
-    <div class="surprise-aid reveal">
-      <div class="surprise-gift">🎁</div>
-      <div class="surprise-aid-title">✦ Surprise Aïd ✦</div>
-      <p class="surprise-aid-text">Pour tout achat d'un <strong style="color:var(--gold-light)">Coffret Famille</strong> ou <strong style="color:var(--gold-light)">Premium</strong></p>
-      <div class="surprise-aid-highlight">= 1 douceur offerte 🌙</div>
-    </div>
-
-    <p class="aid-limited reveal">☽ Offres spéciales Aïd · Quantités limitées · Réservation conseillée ☽</p>
-
-  </div>
-</div>
 <section id="dates">
   <div class="section-wrap">
     <div class="section-label">Idéal pour offrir</div>
@@ -1013,7 +692,6 @@ footer span { color:var(--gold); opacity:.45; }
 
     <div class="order-section reveal">
 
-      <!-- SUCCESS -->
       <form id="orderForm">
 
         <!-- RECAP -->
@@ -1291,20 +969,20 @@ footer span { color:var(--gold); opacity:.45; }
 <script>
 // ── DATA ──
 const patisseries = [
-  { id:'citron',    name:'Citron',           emoji:'🍋', price:5, priceNormal:6,  desc:'Trompe-l\'œil acidulé et frais, une illusion gustative parfaite' },
-  { id:'mangue',    name:'Mangue',           emoji:'🥭', price:5, priceNormal:6,  desc:'Exotisme tropical encapsulé dans une pâtisserie surprenante' },
-  { id:'framboise', name:'Framboise', emoji:'🍓', price:5, priceNormal:6, desc:'Fraîcheur et élégance dans une forme en cœur délicate' },
-  { id:'cacahuete', name:'Cacahuète',        emoji:'🥜', price:5, priceNormal:6,  desc:'Gourmandise croquante au design naturel bluffant' },
-  { id:'passion',   name:'Passion',          emoji:'🌺', price:5, priceNormal:6,  desc:'L\'intensité du fruit de la passion sublimée en art pâtissier' },
-  { id:'vanille',   name:'Gousse de Vanille',emoji:'🌿', price:7, priceNormal:8,  desc:'La reine des saveurs, un chef-d\'œuvre trompe-l\'œil floral' },
+  { id:'citron',    name:'Citron',           emoji:'🍋', price:6, desc:'Trompe-l\'œil acidulé et frais, une illusion gustative parfaite' },
+  { id:'mangue',    name:'Mangue',           emoji:'🥭', price:6, desc:'Exotisme tropical encapsulé dans une pâtisserie surprenante' },
+  { id:'framboise', name:'Framboise',        emoji:'🍓', price:6, desc:'Fraîcheur et élégance dans une forme en cœur délicate' },
+  { id:'cacahuete', name:'Cacahuète',        emoji:'🥜', price:6, desc:'Gourmandise croquante au design naturel bluffant' },
+  { id:'passion',   name:'Passion',          emoji:'🌺', price:6, desc:'L\'intensité du fruit de la passion sublimée en art pâtissier' },
+  { id:'vanille',   name:'Gousse de Vanille',emoji:'🌿', price:8, desc:'La reine des saveurs, un chef-d\'œuvre trompe-l\'œil floral' },
 ];
 
 const boxes = [
-  {qty:5,price:5,priceNormal:6},{qty:10,price:10,priceNormal:12},{qty:15,price:15,priceNormal:17},{qty:20,price:20,priceNormal:22},{qty:30,price:30,priceNormal:30}
+  {qty:5,price:6},{qty:10,price:12},{qty:15,price:17},{qty:20,price:22},{qty:30,price:30}
 ];
 
 const dattesGouts = ['Raffaelo','Spéculos','Noisette','Pralinée','Caramel beurre salé'];
-const dattesChoix = {}; // { Raffaelo: 2, ... }
+const dattesChoix = {};
 dattesGouts.forEach(g => dattesChoix[g] = 0);
 
 const dattesEmoji = {
@@ -1319,7 +997,7 @@ const franuiOpts = [
 ];
 
 // ── STATE ──
-const quantities = {}; // patisseries
+const quantities = {};
 let selectedBox    = null;
 let selectedFranui = null;
 
@@ -1337,37 +1015,6 @@ function updateRecap() {
       const sub = p.price * quantities[p.id];
       total += sub;
       items.push({ name:`${p.emoji} ${p.name} ×${quantities[p.id]}`, price:sub });
-    }
-  });
-
-  // Coffrets Aïd — un par un
-  Object.keys(coffrets).forEach(type => {
-    const qty = coffretQtys[type];
-    if (qty === 0) return;
-    const c = coffrets[type];
-    total += c.price * qty;
-
-    for (let i = 0; i < qty; i++) {
-      const sel = coffretSelections[type] && coffretSelections[type][i];
-      const label = qty > 1 ? `${c.emoji} ${c.name} n°${i+1}` : `${c.emoji} ${c.name}`;
-      const prix = i === 0 ? c.price * qty : 0;
-
-      let detail = '';
-      if (sel) {
-        const trompeLines = patisseries.filter(p => sel.trompes[p.id] > 0)
-          .map(p => `• ${p.name} ×${sel.trompes[p.id]}`).join('<br>');
-        detail += trompeLines
-          ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${trompeLines}</span>`
-          : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos parfums</span>`;
-        if (c.dattes > 0) {
-          const datteLines = dattesGouts.filter(g => sel.dattes[g] > 0)
-            .map(g => `• ${g} ×${sel.dattes[g]}`).join('<br>');
-          detail += datteLines
-            ? `<br><span style="font-size:.82rem;opacity:.65;line-height:1.8;">${datteLines}</span>`
-            : `<br><span style="font-size:.82rem;opacity:.4;font-style:italic;">Sélectionnez vos dattes</span>`;
-        }
-      }
-      items.push({ name:`${label}${detail}`, price: prix });
     }
   });
 
@@ -1454,7 +1101,6 @@ patisseries.forEach(p => {
     <div class="card-name">${p.name}</div>
     <div class="card-desc">${p.desc}</div>
     <div class="price-tag">
-      ${p.priceNormal ? `<span class="old-price">${p.priceNormal}€</span>` : ''}
       <span class="new-price">${p.price}€</span><span class="per-piece"> / pièce</span>
     </div>
     <div class="card-qty">
@@ -1465,213 +1111,6 @@ patisseries.forEach(p => {
   grid.appendChild(card);
 });
 
-// ── COFFRETS AÏD ──
-const coffrets = {
-  decouverte: { name: 'Coffret Aïd Découverte', emoji: '🎁', price: 17, trompes: 4, dattes: 0 },
-  premium:    { name: 'Coffret Aïd Premium',    emoji: '🎀', price: 30, trompes: 6, dattes: 5 },
-  famille:    { name: 'Coffret Famille Aïd',    emoji: '👨‍👩‍👧‍👦', price: 45, trompes: 6, dattes: 10 },
-};
-const coffretQtys = { decouverte: 0, premium: 0, famille: 0 };
-
-// Structure : coffretSelections[type][index] = { trompes: {citron:2,...}, dattes: {Raffaelo:3,...} }
-const coffretSelections = { decouverte: [], premium: [], famille: [] };
-
-function initCoffretSelections() {
-  Object.keys(coffrets).forEach(type => {
-    const qty = coffretQtys[type];
-    const c = coffrets[type];
-    // Ajuster le tableau à la bonne taille
-    while (coffretSelections[type].length < qty) {
-      coffretSelections[type].push({
-        trompes: Object.fromEntries(patisseries.map(p => [p.id, 0])),
-        dattes:  Object.fromEntries(dattesGouts.map(g => [g, 0]))
-      });
-    }
-    coffretSelections[type].length = qty;
-  });
-}
-
-function getTrompesNeeded(type, index) { return coffrets[type].trompes; }
-function getTrompesChoisi(type, index) { return Object.values(coffretSelections[type][index].trompes).reduce((a,v)=>a+v,0); }
-function getDattesNeeded(type, index)  { return coffrets[type].dattes; }
-function getDattesChoisi(type, index)  { return Object.values(coffretSelections[type][index].dattes).reduce((a,v)=>a+v,0); }
-
-function renderAllCoffretSelectors() {
-  initCoffretSelections();
-  const container = document.getElementById('coffretSelectorsContainer');
-  container.innerHTML = '';
-
-  Object.keys(coffrets).forEach(type => {
-    const qty = coffretQtys[type];
-    if (qty === 0) return;
-    const c = coffrets[type];
-
-    for (let i = 0; i < qty; i++) {
-      const sel = coffretSelections[type][i];
-      const label = qty > 1 ? `${c.emoji} ${c.name} n°${i+1}` : `${c.emoji} ${c.name}`;
-
-      const block = document.createElement('div');
-      block.className = 'trompe-selector';
-      block.style.marginBottom = '16px';
-
-      // ── Trompe-l'œil ──
-      const tNeeded = c.trompes;
-      const tChoisi = getTrompesChoisi(type, i);
-      let trompeHTML = `
-        <div class="trompe-selector-title">
-          <span>🍋</span> ${label} — Trompe-l'œil
-          <span class="trompe-counter" id="tc-t-${type}-${i}">${tChoisi}/${tNeeded}</span>
-        </div>
-        <p class="trompe-hint">Choisissez exactement ${tNeeded} trompe-l'œil${type==='decouverte'?' (vanille non disponible)':''}</p>
-        <div class="trompe-grid" id="tg-${type}-${i}"></div>
-        <p class="trompe-valid" id="tv-${type}-${i}"></p>`;
-
-      // ── Dattes (si applicable) ──
-      if (c.dattes > 0) {
-        const dNeeded = c.dattes;
-        const dChoisi = getDattesChoisi(type, i);
-        trompeHTML += `
-        <div style="margin-top:20px; padding-top:18px; border-top:1px solid rgba(201,168,76,.15);">
-          <div class="trompe-selector-title">
-            <span>🌴</span> ${label} — Dattes fourrées
-            <span class="trompe-counter" id="tc-d-${type}-${i}">${dChoisi}/${dNeeded}</span>
-          </div>
-          <p class="trompe-hint">Choisissez exactement ${dNeeded} dattes fourrées</p>
-          <div class="trompe-grid" id="dg-${type}-${i}"></div>
-          <p class="trompe-valid" id="dv-${type}-${i}"></p>
-        </div>`;
-      }
-
-      block.innerHTML = trompeHTML;
-      container.appendChild(block);
-
-      // Render trompe items
-      renderTrompeGrid(type, i);
-      if (c.dattes > 0) renderDatteGrid(type, i);
-    }
-  });
-
-  updateRecap();
-}
-
-function renderTrompeGrid(type, i) {
-  const grid = document.getElementById(`tg-${type}-${i}`);
-  if (!grid) return;
-  const sel = coffretSelections[type][i];
-  const tNeeded = coffrets[type].trompes;
-  const tChoisi = getTrompesChoisi(type, i);
-  grid.innerHTML = '';
-
-  patisseries.forEach(p => {
-    const qty = sel.trompes[p.id];
-    const div = document.createElement('div');
-    div.className = 'trompe-item' + (qty > 0 ? ' selected' : '');
-    div.innerHTML = `
-      <div class="trompe-item-qty">${qty}</div>
-      <span class="trompe-item-emoji">${p.id==='framboise'?RASP_HTML_SM:p.id==='vanille'?VAN_HTML_SM:p.id==='passion'?PAS_HTML_SM:p.emoji}</span>
-      <span class="trompe-item-name">${p.name}</span>
-      <div class="trompe-item-btns">
-        <button type="button" onclick="changeTrompeItem('${type}',${i},'${p.id}',-1,event)">−</button>
-        <span>${qty}</span>
-        <button type="button" onclick="changeTrompeItem('${type}',${i},'${p.id}',1,event)">+</button>
-      </div>`;
-    grid.appendChild(div);
-  });
-
-  const valid = document.getElementById(`tv-${type}-${i}`);
-  const counter = document.getElementById(`tc-t-${type}-${i}`);
-  if (counter) counter.textContent = `${tChoisi}/${tNeeded}`;
-  if (valid) {
-    if (tChoisi === tNeeded) { valid.textContent = '✦ Parfait !'; valid.className = 'trompe-valid ok'; }
-    else { valid.textContent = `Il reste ${tNeeded - tChoisi} trompe-l'œil à choisir.`; valid.className = 'trompe-valid'; }
-  }
-}
-
-function renderDatteGrid(type, i) {
-  const grid = document.getElementById(`dg-${type}-${i}`);
-  if (!grid) return;
-  const sel = coffretSelections[type][i];
-  const dNeeded = coffrets[type].dattes;
-  const dChoisi = getDattesChoisi(type, i);
-  grid.innerHTML = '';
-
-  dattesGouts.forEach(g => {
-    const qty = sel.dattes[g];
-    const div = document.createElement('div');
-    div.className = 'trompe-item' + (qty > 0 ? ' selected' : '');
-    div.innerHTML = `
-      <div class="trompe-item-qty">${qty}</div>
-      <span class="trompe-item-emoji">${dattesEmoji[g]}</span>
-      <span class="trompe-item-name">${g}</span>
-      <div class="trompe-item-btns">
-        <button type="button" onclick="changeDatteItem('${type}',${i},'${g}',-1,event)">−</button>
-        <span>${qty}</span>
-        <button type="button" onclick="changeDatteItem('${type}',${i},'${g}',1,event)">+</button>
-      </div>`;
-    grid.appendChild(div);
-  });
-
-  const valid = document.getElementById(`dv-${type}-${i}`);
-  const counter = document.getElementById(`tc-d-${type}-${i}`);
-  if (counter) counter.textContent = `${dChoisi}/${dNeeded}`;
-  if (valid) {
-    if (dChoisi === dNeeded) { valid.textContent = '✦ Parfait !'; valid.className = 'trompe-valid ok'; }
-    else { valid.textContent = `Il reste ${dNeeded - dChoisi} dattes à choisir.`; valid.className = 'trompe-valid'; }
-  }
-}
-
-function changeTrompeItem(type, i, id, d, event) {
-  event.stopPropagation(); event.preventDefault();
-  const sel = coffretSelections[type][i];
-  const tNeeded = coffrets[type].trompes;
-  const tChoisi = getTrompesChoisi(type, i);
-  if (d > 0) {
-    if (id === 'vanille' && type === 'decouverte') { showToast('La vanille n\'est pas disponible pour le Coffret Découverte', 4500); return; }
-    if (id === 'vanille' && sel.trompes['vanille'] >= 1) { showToast('Maximum 1 Gousse de Vanille par coffret', 4500); return; }
-    if (tChoisi >= tNeeded) { showToast('Vous avez atteint le nombre requis pour ce coffret !'); return; }
-  }
-  sel.trompes[id] = Math.max(0, sel.trompes[id] + d);
-  if (d > 0) spawnSparkle(event);
-  renderTrompeGrid(type, i);
-  updateRecap();
-}
-
-function changeDatteItem(type, i, gout, d, event) {
-  event.stopPropagation(); event.preventDefault();
-  const sel = coffretSelections[type][i];
-  const dNeeded = coffrets[type].dattes;
-  const dChoisi = getDattesChoisi(type, i);
-  if (d > 0 && dChoisi >= dNeeded) { showToast('Vous avez atteint le nombre requis pour ce coffret !'); return; }
-  sel.dattes[gout] = Math.max(0, sel.dattes[gout] + d);
-  if (d > 0) spawnSparkle(event);
-  renderDatteGrid(type, i);
-  updateRecap();
-}
-
-function changeCoffretQty(id, d, event) {
-  event.stopPropagation(); event.preventDefault();
-  coffretQtys[id] = Math.max(0, Math.min(20, coffretQtys[id] + d));
-  const el = document.getElementById('qn-' + id);
-  el.textContent = coffretQtys[id];
-  el.classList.toggle('active', coffretQtys[id] > 0);
-  if (d > 0) spawnSparkle(event);
-  renderAllCoffretSelectors();
-  showToast(d > 0 ? `${coffrets[id].name} ajouté ✦` : `${coffrets[id].name} retiré`);
-}
-
-// ── Étoiles Aïd ──
-const aidStarsEl = document.getElementById('aidStars');
-for (let i = 0; i < 40; i++) {
-  const s = document.createElement('div');
-  s.className = 'aid-star';
-  s.textContent = ['✦','✧','★','☽','·'][Math.floor(Math.random()*5)];
-  s.style.left = Math.random()*100+'%';
-  s.style.top  = Math.random()*100+'%';
-  s.style.animationDuration = (2+Math.random()*4)+'s';
-  s.style.animationDelay   = (Math.random()*5)+'s';
-  s.style.fontSize = (8+Math.random()*10)+'px';
-  aidStarsEl.appendChild(s);
-}
 const boxGrid = document.getElementById('boxesGrid');
 
 // Option "Pas de dattes"
@@ -1695,14 +1134,12 @@ boxes.forEach(b => {
   el.className = 'box-option';
   el.innerHTML = `
     <span class="box-qty-lbl">×${b.qty}</span>
-    ${b.priceNormal && b.priceNormal !== b.price ? `<span style="text-decoration:line-through;opacity:.35;font-size:.75rem;">${b.priceNormal}€</span> ` : ''}
     <span class="box-price-lbl">${b.price}€</span>
     <span class="box-sub">dattes</span>`;
   el.onclick = () => {
     document.querySelectorAll('.box-option').forEach(x=>x.classList.remove('selected'));
     el.classList.add('selected');
     selectedBox = b;
-    // Reset goûts dattes
     dattesGouts.forEach(g => dattesChoix[g] = 0);
     renderDattesSelector();
     updateRecap();
@@ -1817,36 +1254,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const fd = new FormData(this);
 
-  // Vérifier chaque coffret individuellement
-  for (const type of Object.keys(coffrets)) {
-    const qty = coffretQtys[type];
-    if (qty === 0) continue;
-    const c = coffrets[type];
-    for (let i = 0; i < qty; i++) {
-      const sel = coffretSelections[type][i];
-      const label = qty > 1 ? `${c.name} n°${i+1}` : c.name;
-      const tChoisi = getTrompesChoisi(type, i);
-      if (tChoisi < c.trompes) {
-        document.getElementById(`tv-${type}-${i}`).textContent = `⚠️ Il reste ${c.trompes - tChoisi} trompe-l'œil à choisir.`;
-        document.getElementById(`tv-${type}-${i}`).className = 'trompe-valid error';
-        document.getElementById(`tg-${type}-${i}`).scrollIntoView({ behavior:'smooth', block:'center' });
-        showToast(`⚠️ ${label} — complétez les trompe-l'œil`);
-        return;
-      }
-      if (c.dattes > 0) {
-        const dChoisi = getDattesChoisi(type, i);
-        if (dChoisi < c.dattes) {
-          document.getElementById(`dv-${type}-${i}`).textContent = `⚠️ Il reste ${c.dattes - dChoisi} dattes à choisir.`;
-          document.getElementById(`dv-${type}-${i}`).className = 'trompe-valid error';
-          document.getElementById(`dg-${type}-${i}`).scrollIntoView({ behavior:'smooth', block:'center' });
-          showToast(`⚠️ ${label} — complétez les dattes`);
-          return;
-        }
-      }
-    }
-  }
-
-  // Vérifier que les goûts dattes box sont complets
   if (selectedBox) {
     const dattesTotal = Object.values(dattesChoix).reduce((a,v)=>a+v,0);
     if (dattesTotal < selectedBox.qty) {
@@ -1858,7 +1265,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     }
   }
 
-  // Vérifier que la ville est sélectionnée
   const ville = fd.get('ville');
   if (!ville) {
     document.getElementById('villeRadioRow').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1892,28 +1298,8 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 
   const telComplet = indicatif + ' ' + (indicatif === '+33' ? tel : telRaw);
 
-  // Build summary — un coffret individuel par ligne
   let lines = [];
   patisseries.forEach(p => { if (quantities[p.id]>0) lines.push(`${p.name} ×${quantities[p.id]}`); });
-
-  Object.keys(coffrets).forEach(type => {
-    const qty = coffretQtys[type];
-    if (qty === 0) return;
-    const c = coffrets[type];
-    for (let i = 0; i < qty; i++) {
-      const sel = coffretSelections[type][i];
-      const label = qty > 1 ? `${c.name} n°${i+1}` : c.name;
-      const parfums = patisseries.filter(p => sel.trompes[p.id] > 0)
-        .map(p => `${p.name} ×${sel.trompes[p.id]}`).join(', ');
-      let line = `${label} → Trompe-l'œil : ${parfums || '—'}`;
-      if (c.dattes > 0) {
-        const dattesCoffret = dattesGouts.filter(g => sel.dattes[g] > 0)
-          .map(g => `${g} ×${sel.dattes[g]}`).join(', ');
-        line += ` | Dattes : ${dattesCoffret || '—'}`;
-      }
-      lines.push(line);
-    }
-  });
 
   if (selectedBox) {
     const goutsList = dattesGouts.filter(g => dattesChoix[g] > 0).map(g => `${g} ×${dattesChoix[g]}`).join(', ');
@@ -1922,11 +1308,9 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
   if (selectedFranui) lines.push(`Franui ${selectedFranui.label}`);
 
   const total = patisseries.reduce((a,p)=>a+quantities[p.id]*p.price,0)
-    + Object.keys(coffrets).reduce((a,type)=>a+coffretQtys[type]*coffrets[type].price,0)
     + (selectedBox?selectedBox.price:0)
     + (selectedFranui?selectedFranui.price:0);
 
-  // Envoi vers Google Sheets
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLmIwq2WewReiOTsH_kH9ldPQfJ3beHEtnqBNXfC95xdNmArN72mPjiTwcuSQffYFz1A/exec';
   fetch(SCRIPT_URL, {
     method: 'POST',
@@ -1942,7 +1326,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     })
   }).catch(err => console.error('Erreur envoi commande:', err));
 
-  // Confetti
   for (let i=0;i<18;i++) {
     setTimeout(()=>{
       const el = document.createElement('div');
@@ -1972,31 +1355,18 @@ if (cmdSection) floatObs.observe(cmdSection);
 
 // ── RESET SITE ──
 function resetSite() {
-  // Cacher le success screen
   document.getElementById('successScreen').style.display = 'none';
 
-  // Remettre le formulaire
   const form = document.getElementById('orderForm');
   form.reset();
   form.style.display = '';
 
-  // Remettre les quantités pâtisseries à 0
   patisseries.forEach(p => {
     quantities[p.id] = 0;
     const el = document.getElementById('qn-' + p.id);
     if (el) { el.textContent = '0'; el.classList.remove('active'); }
   });
 
-  // Remettre les coffrets à 0
-  Object.keys(coffretQtys).forEach(id => {
-    coffretQtys[id] = 0;
-    const el = document.getElementById('qn-' + id);
-    if (el) { el.textContent = '0'; el.classList.remove('active'); }
-  });
-  Object.keys(coffretSelections).forEach(type => coffretSelections[type] = []);
-  renderAllCoffretSelectors();
-
-  // Remettre dattes et franui à "aucun"
   selectedBox = null;
   dattesGouts.forEach(g => dattesChoix[g] = 0);
   renderDattesSelector();
@@ -2007,16 +1377,12 @@ function resetSite() {
   document.querySelectorAll('.franui-opt').forEach(x => x.classList.remove('selected'));
   document.querySelector('.franui-opt')?.classList.add('selected');
 
-  // Remettre les erreurs
   document.getElementById('villeError').style.display = 'none';
   document.getElementById('telError').style.display = 'none';
   document.getElementById('telInput').style.borderColor = '';
   document.getElementById('indicatif').value = '+33';
 
-  // Mettre à jour le récap
   updateRecap();
-
-  // Remonter en haut
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
